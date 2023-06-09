@@ -19,3 +19,7 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/whoami
 Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6InNhYnJpbmFAbWFpbC5jb20iLCJpYXQiOjE2ODI2OTI2MDh9.VneW1WUp6Cupqe2H4zdYwwc18Ows-8OXnjd1nd1vTCY
+
+###
+GET http://localhost:3000/payment_method
+Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6InNhYnJpbmFAbWFpbC5jb20iLCJpYXQiOjE2ODI2OTI2MDh9.VneW1WUp6Cupqe2H4zdYwwc18Ows-8OXnjd1nd1vTCY
