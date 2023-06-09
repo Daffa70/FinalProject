@@ -4,7 +4,7 @@ const app = express();
 const morgan = require("morgan");
 const router = require("./routes");
 const cors = require("cors");
-const nodemailer = require("../utils/nodemailer");
+// const nodemailer = require("../utils/nodemailer");
 
 // const { SENTRY_DSN, ENVIRONMENT } = process.env;
 

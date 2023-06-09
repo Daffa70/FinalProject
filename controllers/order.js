@@ -1,18 +1,18 @@
-const { Passenger } = require("../db/models");
+const { Order } = require("../db/models");
 
 module.exports = {
   store: async(req, res) => {
     try {
-      const {order_id, booking_order, full_name, family_name, phone, email, title, date_birth, nationality, identity_number, issuing_country, identity_expired, schedule_id, seat_id} = req.body;
+      const {user_id, full_name, family_name, title, email, phone} = req.body;
 
-      const passenger = await Passenger.create({
-        order_id, booking_order, full_name, family_name, phone, email, title, date_birth, nationality, identity_number, issuing_country, identity_expired, schedule_id, seat_id
+      const order = await Order.create({
+        user_id, full_name, family_name, title, email, phone
       });
 
       return res.status(201).json({
         status: true,
         message: 'success',
-        data: passenger
+        data: order
       });
     } catch (error) {
       throw error;
@@ -21,12 +21,12 @@ module.exports = {
 
   showAll: async(req, res) => {
     try {
-      const passenger = await Passenger.findAll();
+      const order = await Order.findAll();
 
       return res.status(200).json({
         status: true,
         message: 'success',
-        data: passenger
+        data: order
       });
     } catch (error) {
       throw error;
@@ -35,13 +35,13 @@ module.exports = {
 
   showIndex: async(req, res) => {
     try {
-      const {passenger_id} = req.params;
+      const {order_id} = req.params;
 
-      const passenger = await Passenger.findOne({where: {id: passenger_id}});
-      if(!passenger){
+      const order = await Order.findOne({where: {id: order_id}});
+      if(!order){
         return res.status(404).json({
           status: false,
-          message: `can't find passenger with id ${passenger_id}!`,
+          message: `can't find order with id ${order_id}!`,
           data: null
         });
       }
@@ -49,7 +49,7 @@ module.exports = {
       return res.status(200).json({
         status: true,
         message: 'success',
-        data: passenger
+        data: order
       });
     } catch (error) {
       throw error;
@@ -58,13 +58,13 @@ module.exports = {
 
   update: async(req, res) => {
     try {
-      const {passenger_id} = req.params;
+      const {order_id} = req.params;
 
-      const updated = await Passenger.update(req.body, {where: {id: passenger_id}});
+      const updated = await Order.update(req.body, {where: {id: order_id}});
       if (!updated) {
         return res.status(404).json({
             status: false,
-            message: `can't find passenger with id ${passenger_id}!`,
+            message: `can't find order with id ${order_id}!`,
             data: null
         });
       }
@@ -81,13 +81,13 @@ module.exports = {
 
   destroy: async(req, res) => {
     try {
-      const {passenger_id} = req.params;
+      const {order_id} = req.params;
 
-      const deleted = await Passenger.destroy({where: {id: passenger_id}});
+      const deleted = await Order.destroy({where: {id: order_id}});
       if (!deleted) {
         return res.status(404).json({
             status: false,
-            message: `can't find passenger with id ${passenger_id}!`,
+            message: `can't find order with id ${order_id}!`,
             data: null
         });
       }
