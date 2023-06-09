@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class OtpVerify extends Model {
     /**
@@ -13,12 +11,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  OtpVerify.init({
-    user_id: DataTypes.INTEGER,
-    otp_num: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'OtpVerify',
-  });
+  OtpVerify.init(
+    {
+      user_id: DataTypes.INTEGER,
+      otp_num: DataTypes.INTEGER,
+      last_sent_at: DataTypes.DATE,
+    },
+    {
+      sequelize,
+      modelName: "OtpVerify",
+    }
+  );
   return OtpVerify;
 };
