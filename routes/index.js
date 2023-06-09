@@ -28,6 +28,10 @@ router.get("/error", (req, res) => {
 router.post("/auth/register", user.register);
 router.post("/auth/login", user.login);
 router.get("/auth/whoami", middlewares.auth, user.whoami);
+router.post("/auth/resend-otp", user.resendOtp);
+router.post("/auth/verify-otp", user.verifyOtp);
+router.post("/auth/send-reset-password", user.sendResetPassword);
+router.post("/auth/reset-password", user.resetPassword);
 
 // Passenger
 router.post("/passenger", passenger.store);
