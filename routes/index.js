@@ -70,31 +70,31 @@ router.post("/auth/send-reset-password", user.sendResetPassword);
 router.post("/auth/reset-password", user.resetPassword);
 
 // Passenger
-router.post("/passenger", passenger.store);
-router.get("/passenger", passenger.showAll);
-router.get("/passenger/:id", passenger.showIndex);
-router.put("/passenger/:id", passenger.update);
-router.delete("/passenger/:id", passenger.destroy);
+router.post("/passengers", passenger.store);
+router.get("/passengers", passenger.showAll);
+router.get("/passengers/:id", passenger.showIndex);
+router.put("/passengers/:id", passenger.update);
+router.delete("/passengers/:id", passenger.destroy);
 
 // Order
-router.post("/order", order.store);
-router.get("/order", order.showAll);
-router.get("/order/:id", order.showIndex);
-router.put("/order/:id", order.update);
-router.delete("/order/:id", order.destroy);
+router.post("/orders", order.store);
+router.get("/orders", order.showAll);
+router.get("/orders/:id", order.showIndex);
+router.put("/orders/:id", order.update);
+router.delete("/orders/:id", order.destroy);
 
 // Payment
-router.post("/payment", payment.store);
-router.get("/payment", payment.showAll);
-router.get("/payment/:id", payment.showIndex);
-router.put("/payment/:id", payment.update);
-router.delete("/payment/:id", payment.destroy);
+router.post("/payments", payment.store);
+router.get("/payments", payment.showAll);
+router.get("/payments/:id", payment.showIndex);
+router.put("/payments/:id", payment.update);
+router.delete("/payments/:id", payment.destroy);
 
 // Payment Method
-router.post("/payment_method", payment_method.store);
-router.get("/payment_method", payment_method.showAll);
-router.get("/payment_method/:id", payment_method.showIndex);
-router.put("/payment_method/:id", payment_method.update);
-router.delete("/payment_method/:id", payment_method.destroy);
+router.post("/payment_methods", payment_method.store);
+router.get("/payment_methods", payment_method.showAll);
+router.get("/payment_methods/:id", payment_method.showIndex);
+router.put("/payment_methods/:id", payment_method.update);
+router.delete("/payment_methods/:id", payment_method.destroy);
 
 module.exports = router;
