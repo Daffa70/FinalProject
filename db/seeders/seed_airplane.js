@@ -5,13 +5,15 @@ const airlines = require("./data/airlines.json");
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    let airplanesKey = 0;
     const airplanes = [];
     for (const [airlinesKey, airline] of Object.entries(airlines)) {
+      airplanesKey = airplanesKey + 1;
       for (const [key, value] of Object.entries(airline.airplanes)) {
         airplanes.push({
           model: value.model,
           code: value.id,
-          airlane_id: airlinesKey,
+          airline_id: airplanesKey,
           seat_layout: value.seatLayout,
           total_seat: value.seatPitch,
           createdAt: new Date(),

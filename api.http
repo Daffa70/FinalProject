@@ -18,5 +18,20 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:3000/flight_schedulles
+Content-Type: application/json
+
+{
+    "airplane_id" : 1,
+    "departure_time" : "2023-06-12T06:32:14.000Z",
+    "arrival_time" : "2023-06-12T09:32:14.000Z",
+    "departure_airport_id" : 1,
+    "arrival_airport_id" : 4,
+    "flight_number" : "ABCS",
+    "free_baggage" : 20,
+    "cabin_baggage" : 15
+}
+
+###
 GET http://localhost:3000/whoami
 
