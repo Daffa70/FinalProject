@@ -21,7 +21,7 @@ module.exports = {
       total_seat: {
         type: Sequelize.STRING,
       },
-      airlane_id: {
+      airline_id: {
         type: Sequelize.INTEGER,
       },
       createdAt: {

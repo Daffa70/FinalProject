@@ -8,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      models.Airplane.hasMany(models.Flight_schedulle, {
+        foreignKey: "airplane_id",
+        as: "schedulle",
+      });
     }
   }
   Airplane.init(
@@ -17,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
       code: DataTypes.STRING,
       seat_layout: DataTypes.STRING,
       total_seat: DataTypes.INTEGER,
-      airlane_id: DataTypes.INTEGER,
+      airline_id: DataTypes.INTEGER,
     },
     {
       sequelize,
