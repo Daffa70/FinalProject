@@ -72,29 +72,29 @@ router.post("/auth/reset-password", user.resetPassword);
 // Passenger
 router.post("/passengers", passenger.store);
 router.get("/passengers", passenger.showAll);
-router.get("/passengers/:id", passenger.showIndex);
-router.put("/passengers/:id", passenger.update);
-router.delete("/passengers/:id", passenger.destroy);
+router.get("/passengers/:passenger_id", passenger.showIndex);
+router.put("/passengers/:passenger_id", passenger.update);
+router.delete("/passengers/:passenger_id", passenger.destroy);
 
 // Order
 router.post("/orders", order.store);
 router.get("/orders", order.showAll);
-router.get("/orders/:id", order.showIndex);
-router.put("/orders/:id", order.update);
-router.delete("/orders/:id", order.destroy);
+router.get("/orders/:order_id", order.showIndex);
+router.put("/orders/:order_id", order.update);
+router.delete("/orders/:order_id", order.destroy);
 
 // Payment
 router.post("/payments", payment.store);
 router.get("/payments", payment.showAll);
-router.get("/payments/:id", payment.showIndex);
-router.put("/payments/:id", payment.update);
-router.delete("/payments/:id", payment.destroy);
+router.get("/payments/:payment_id", payment.showIndex);
+router.put("/payments/:payment_id", payment.update);
+router.delete("/payments/:payment_id", payment.destroy);
 
 // Payment Method
 router.post("/payment_methods", payment_method.store);
 router.get("/payment_methods", payment_method.showAll);
-router.get("/payment_methods/:id", payment_method.showIndex);
-router.put("/payment_methods/:id", payment_method.update);
-router.delete("/payment_methods/:id", payment_method.destroy);
+router.get("/payment_methods/:payment_method_id", payment_method.showIndex);
+router.put("/payment_methods/:payment_method_id", payment_method.update);
+router.delete("/payment_methods/:payment_method_id", payment_method.destroy);
 
 module.exports = router;
