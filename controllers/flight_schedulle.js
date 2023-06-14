@@ -3,9 +3,11 @@ const {
   Airline,
   Airport,
   Airplane,
+  SeatClass,
+  Seat,
 } = require("../db/models");
 const moment = require("moment");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 
 module.exports = {
   index: async (req, res, next) => {
@@ -27,24 +29,32 @@ module.exports = {
     try {
       const {
         airplane_id,
-        departure_time,
-        arrival_time,
         departure_airport_id,
         arrival_airport_id,
         flight_number,
         free_baggage,
         cabin_baggage,
+        price,
+        class_id,
+        departure_terminal_name,
+        arrival_terminal_name,
+        departure_time,
+        arrival_time,
       } = req.body;
+
+      const convertedDepartureTime = moment(departure_time);
+      const convertedArrivalTime = moment(arrival_time);
+
       const ready = await Flight_schedulle.findOne({
         where: {
           airplane_id,
-          departure_time: moment(departure_time).format("YYYY-MM-DD HH:mm:ss"),
-          arrival_time: moment(arrival_time).format("YYYY-MM-DD HH:mm:ss"),
           departure_airport_id,
           arrival_airport_id,
           flight_number,
           free_baggage,
           cabin_baggage,
+          price,
+          class_id,
         },
       });
 
@@ -86,13 +96,54 @@ module.exports = {
           data: null,
         });
       }
+
+      const timeDifferenceMs = convertedArrivalTime - convertedDepartureTime;
+      const durationMinutes = Math.floor(timeDifferenceMs / (1000 * 60));
+
+      const departureDateTime = new Date(departure_time);
+      const departureDate = departureDateTime.toISOString().split("T")[0];
+      const departureTime = departureDateTime
+        .toISOString()
+        .split("T")[1]
+        .slice(0, 8);
+
+      const arrivalDateTime = new Date(arrival_time);
+      const arrivalDate = arrivalDateTime.toISOString().split("T")[0];
+      const arrivalTime = arrivalDateTime
+        .toISOString()
+        .split("T")[1]
+        .slice(0, 8);
+
+      let seatAvaiable = 30;
+
+      const airplane = await Airplane.findOne({ where: { id: airplane_id } });
+
+      if (airplane.total_seat != null) {
+        seatAvaiable = airplane.total_seat;
+      }
+
       const flight_schedulle = await Flight_schedulle.create({
         airplane_id: airplane_id,
-        departure_time: departure_time,
-        arrival_time: arrival_time,
+        departure_time,
+        arrival_time,
         departure_airport_id: departure_airport_id,
         arrival_airport_id: arrival_airport_id,
+        flight_number,
+        free_baggage,
+        cabin_baggage,
+        price,
+        class_id,
+        duration: durationMinutes,
+        departure_terminal_name,
+        arrival_terminal_name,
+        seat_available: seatAvaiable,
       });
+
+      await generateSeats(
+        flight_schedulle.id,
+        airplane.seat_layout,
+        airplane.total_seat
+      );
 
       return res.status(201).json({
         status: true,
@@ -180,7 +231,7 @@ module.exports = {
 
   getSearch: async (req, res, next) => {
     try {
-      const { dep, arr, departure_time } = req.params;
+      const { dep, arr, departure_time, seatclass, sort, person } = req.query;
 
       // Parse the departure_time string into a Date object
       const departureTime = new Date(departure_time);
@@ -198,6 +249,26 @@ module.exports = {
       );
       endDate.setDate(endDate.getDate() + 1);
 
+      console.log(endDate);
+      let sortBy = "";
+      let orderBy = "";
+      if (sort == "price_asc") {
+        sortBy = "price";
+        orderBy = "ASC";
+      } else if (sort == "duration_asc") {
+        sortBy = "duration";
+        orderBy = "ASC";
+      } else if (sort == "arrival_asc") {
+        sortBy = "arrival_time";
+        orderBy = "ASC";
+      } else if (sort == "arrival_desc") {
+        sortBy = "departure_time";
+        orderBy = "DESC";
+      } else if (sort == "arrival_asc") {
+        sortBy = "departure_time";
+        orderBy = "ASC";
+      }
+
       const flight_schedulle = await Flight_schedulle.findAll({
         include: [
           {
@@ -214,12 +285,25 @@ module.exports = {
             as: "arrival_airport",
             where: { code: arr },
           },
+          {
+            model: SeatClass,
+            as: "class",
+            where: { name: seatclass },
+          },
+          {
+            model: Seat,
+            as: "seats",
+          },
         ],
         where: {
-          departure_time: {
+          departure_date: {
             [Op.between]: [startDate, endDate],
           },
+          seat_available: {
+            [Op.gte]: person,
+          },
         },
+        order: [[sortBy, orderBy]],
       });
 
       if (!flight_schedulle || flight_schedulle.length === 0) {
@@ -240,3 +324,52 @@ module.exports = {
     }
   },
 };
+
+function generateSeats(schedule_id, seat_layout, total_seat) {
+  const seats = [];
+
+  let seatLayout;
+  if (seat_layout != null) {
+    seatLayout = seat_layout;
+  } else {
+    seatLayout = "3-3";
+  }
+
+  const [leftSeats, rightSeats] = seatLayout.split("-").map(Number);
+  const totalSeats = total_seat; // Specify the total number of seats
+
+  const rowCount = Math.ceil(totalSeats / (leftSeats + rightSeats));
+
+  const rows = Array.from({ length: rowCount }, (_, i) =>
+    String.fromCharCode(65 + i)
+  );
+  const columns = Array.from(
+    { length: leftSeats + rightSeats },
+    (_, i) => i + 1
+  );
+
+  let seatCounter = 1;
+  for (let row of rows) {
+    for (let column of columns) {
+      if (seatCounter > totalSeats) {
+        break;
+      }
+
+      const seat = `${row}${column}`;
+
+      // Assuming you have a Seat model or schema defined, you can create a new seat entry here
+      const newSeat = new Seat({
+        schedulle_id: schedule_id,
+        seat_no: seat,
+        status: "available",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      // Save the new seat entry to the database or perform any necessary operations
+      newSeat.save();
+
+      seatCounter++;
+    }
+  }
+}
