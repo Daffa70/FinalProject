@@ -59,9 +59,10 @@ module.exports = {
   update: async(req, res) => {
     try {
       const {payment_method_id} = req.params;
+      const data = req.body;
 
       const updated = await Payment_method.update(req.body, {where: {id: payment_method_id}});
-      if (!updated) {
+      if (updated[0] == 0) {
         return res.status(404).json({
             status: false,
             message: `can't find payment method with id ${payment_method_id}!`,
@@ -72,7 +73,7 @@ module.exports = {
       return res.status(201).json({
         status: true,
         message: 'success',
-        data: updated
+        data: data
       });
     } catch (error) {
       throw error;
