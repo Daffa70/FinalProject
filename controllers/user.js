@@ -27,6 +27,7 @@ module.exports = {
         email,
         phone,
         password: hashPassword,
+        user_type: 'basic'
       });
 
       const otp_num = helper.generateOtpNumber();
@@ -71,6 +72,14 @@ module.exports = {
           data: null,
         });
       }
+
+      if(user.user_type == 'google' && user.password == null){
+        return res.status(400).json({
+            status: false,
+            message: 'your account is registered with google oauth, you need to login with google oauth!',
+            data: null
+        });
+    }
 
       const passwordCorrect = await bcryp.compare(password, user.password);
       if (!passwordCorrect) {
@@ -304,6 +313,7 @@ module.exports = {
         user = await User.create({
             name: data.name,
             email: data.email,
+            user_type: 'google'
         });
     }
 
