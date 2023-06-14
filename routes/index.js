@@ -72,6 +72,7 @@ router.delete("/seat_classs/:seatclass_id", seat_class.destroy);
 router.post("/auth/register", user.register);
 router.post("/auth/login", user.login);
 router.get("/auth/whoami", middlewares.auth, user.whoami);
+router.get('/auth/oauth', user.googleOauth2);
 router.post("/auth/resend-otp", user.resendOtp);
 router.post("/auth/verify-otp", user.verifyOtp);
 router.post("/auth/send-reset-password", user.sendResetPassword);
