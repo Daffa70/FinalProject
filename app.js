@@ -4,6 +4,7 @@ const app = express();
 const morgan = require("morgan");
 const router = require("./routes");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 // const { SENTRY_DSN, ENVIRONMENT } = process.env;
 
@@ -24,7 +25,12 @@ const { ENVIRONMENT } = process.env;
 // app.use(Sentry.Handlers.tracingHandler());
 
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 app.use(morgan("dev"));
 
 app.use(router);

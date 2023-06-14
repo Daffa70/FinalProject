@@ -13,6 +13,7 @@ const airport = require("../controllers/airport");
 const flight_schedulle = require("../controllers/flight_schedulle");
 const flight_price = require("../controllers/flight_price");
 const seat_class = require("../controllers/seat_class");
+const notification = require("../controllers/notification");
 
 router.get("/", (req, res) => {
   return res.status(200).json({
@@ -31,6 +32,26 @@ router.get("/error", (req, res) => {
   return res.status(500).json(data);
 });
 
+//important!, using for front end
+router.post("/auth/register", user.register);
+router.post("/auth/login", user.login);
+router.get("/auth/whoami", middlewares.auth, user.whoami);
+router.post("/auth/resend-otp", user.resendOtp);
+router.post("/auth/verify-otp", user.verifyOtp);
+router.post("/auth/send-reset-password", user.sendResetPassword);
+router.post("/auth/reset-password", user.resetPassword);
+
+//home
+router.get("/flight_schedulles_detail", flight_schedulle.getSearch);
+router.get("/airports/search/:citystate", airport.getSearchStateCountry);
+
+//checkout process
+router.post("/checkout-user", middlewares.auth, order.checkout);
+
+//user
+router.get("/notification-user", middlewares.auth, notification.getNotify);
+router.get("/orders-user", middlewares.auth, order.showUser);
+////
 router.get("/airlines", airline.index);
 router.get("/airlines/:airline_id", airline.show);
 router.post("/airlines", airline.store);
@@ -42,7 +63,6 @@ router.get("/airports/:airport_id", airport.show);
 router.post("/airports", airport.store);
 router.put("/airports/:airport_id", airport.update);
 router.delete("/airports/:airport_id", airport.destroy);
-router.get("/airports/search/:citystate", airport.getSearchStateCountry);
 
 router.get("/flight_schedulles", flight_schedulle.index);
 router.get("/flight_schedulles/:flight_schedulle_id", flight_schedulle.show);
@@ -51,10 +71,6 @@ router.put("/flight_schedulles/:flight_schedulle_id", flight_schedulle.update);
 router.delete(
   "/flight_schedulles/:flight_schedulle_id",
   flight_schedulle.destroy
-);
-router.get(
-  "/flight_schedulles/:dep/:arr/:departure_time",
-  flight_schedulle.getSearch
 );
 
 router.get("/flight_prices", flight_price.index);
@@ -77,7 +93,6 @@ router.post("/auth/resend-otp", user.resendOtp);
 router.post("/auth/verify-otp", user.verifyOtp);
 router.post("/auth/send-reset-password", user.sendResetPassword);
 router.post("/auth/reset-password", user.resetPassword);
-
 // Passenger
 router.post("/passengers", passenger.store);
 router.get("/passengers", passenger.showAll);
