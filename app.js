@@ -5,6 +5,8 @@ const morgan = require("morgan");
 const router = require("./routes");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cron = require("./utils/scheduller");
+const moment = require("moment-timezone");
 
 // const { SENTRY_DSN, ENVIRONMENT } = process.env;
 
@@ -23,6 +25,8 @@ const { ENVIRONMENT } = process.env;
 // });
 // app.use(Sentry.Handlers.requestHandler());
 // app.use(Sentry.Handlers.tracingHandler());
+
+moment.tz.setDefault("Asia/Jakarta");
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -47,5 +51,7 @@ app.use((err, req, res, next) => {
     data: null,
   });
 });
+
+cron.schedulleUpdateExpiredUser();
 
 module.exports = app;

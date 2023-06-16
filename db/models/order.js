@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       phone: DataTypes.INTEGER,
       schedulle_id: DataTypes.INTEGER,
       booking_code: DataTypes.STRING,
+      total_price: DataTypes.INTEGER,
+      url_midtrans: DataTypes.STRING,
+      payment_status: DataTypes.STRING,
+      last_payment_date: DataTypes.DATE,
     },
     {
       sequelize,

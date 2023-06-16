@@ -33,6 +33,18 @@ module.exports = {
       booking_code: {
         type: Sequelize.STRING,
       },
+      total_price: {
+        type: Sequelize.INTEGER,
+      },
+      url_midtrans: {
+        type: Sequelize.STRING,
+      },
+      payment_status: {
+        type: Sequelize.STRING,
+      },
+      last_payment_date: {
+        type: Sequelize.DATE,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

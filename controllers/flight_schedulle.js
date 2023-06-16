@@ -13,7 +13,7 @@ module.exports = {
   index: async (req, res, next) => {
     try {
       const flight_schedulle = await Flight_schedulle.findAll({
-        include: ["airplane", "departure_airport", "arrival_airport"],
+        include: ["airplane", "departure_airport", "arrival_airport", "class"],
       });
 
       return res.status(200).json({
@@ -231,28 +231,19 @@ module.exports = {
 
   getSearch: async (req, res, next) => {
     try {
-      const { dep, arr, departure_time, seatclass, sort, person } = req.query;
+      const { sort } = req.query;
+      const {
+        dep_airport,
+        arr_airport,
+        departure_time,
+        return_time,
+        seatclass,
+        person,
+      } = req.body;
 
-      // Parse the departure_time string into a Date object
-      const departureTime = new Date(departure_time);
-
-      // Get the start and end of the departure_time date
-      const startDate = new Date(
-        departureTime.getFullYear(),
-        departureTime.getMonth(),
-        departureTime.getDate()
-      );
-      const endDate = new Date(
-        departureTime.getFullYear(),
-        departureTime.getMonth(),
-        departureTime.getDate()
-      );
-      endDate.setDate(endDate.getDate() + 1);
-
-      console.log(endDate);
       let sortBy = "";
       let orderBy = "";
-      if (sort == "price_asc") {
+      if (sort == "price_asc" || !sort) {
         sortBy = "price";
         orderBy = "ASC";
       } else if (sort == "duration_asc") {
@@ -269,6 +260,23 @@ module.exports = {
         orderBy = "ASC";
       }
 
+      // Parse the departure_time string into a Date object
+      const departureTime = new Date(departure_time);
+
+      // Get the start and end of the departure_time date
+      const startDate = new Date(
+        departureTime.getFullYear(),
+        departureTime.getMonth(),
+        departureTime.getDate()
+      );
+
+      const endDate = new Date(
+        departureTime.getFullYear(),
+        departureTime.getMonth(),
+        departureTime.getDate()
+      );
+      endDate.setDate(endDate.getDate() + 1);
+
       const flight_schedulle = await Flight_schedulle.findAll({
         include: [
           {
@@ -278,12 +286,12 @@ module.exports = {
           {
             model: Airport,
             as: "departure_airport",
-            where: { code: dep },
+            where: { code: dep_airport },
           },
           {
             model: Airport,
             as: "arrival_airport",
-            where: { code: arr },
+            where: { code: arr_airport },
           },
           {
             model: SeatClass,
@@ -314,11 +322,68 @@ module.exports = {
         });
       }
 
-      return res.status(200).json({
-        status: true,
-        message: "Success",
-        data: flight_schedulle,
-      });
+      if (return_time) {
+        const returnTime = new Date(return_time);
+        const endReturnDate = new Date(
+          returnTime.getFullYear(),
+          returnTime.getMonth(),
+          returnTime.getDate()
+        );
+
+        const flight_schedulle_return = await Flight_schedulle.findAll({
+          include: [
+            {
+              model: Airplane,
+              as: "airplane",
+            },
+            {
+              model: Airport,
+              as: "departure_airport",
+              where: { code: arr_airport },
+            },
+            {
+              model: Airport,
+              as: "arrival_airport",
+              where: { code: dep_airport },
+            },
+            {
+              model: SeatClass,
+              as: "class",
+              where: { name: seatclass },
+            },
+            {
+              model: Seat,
+              as: "seats",
+            },
+          ],
+          where: {
+            departure_date: {
+              [Op.between]: [startDate, endReturnDate],
+            },
+            seat_available: {
+              [Op.gte]: person,
+            },
+          },
+          order: [[sortBy, orderBy]],
+        });
+
+        return res.status(200).json({
+          status: true,
+          message: "Success",
+          data: {
+            departure: flight_schedulle,
+            return: flight_schedulle_return,
+          },
+        });
+      } else {
+        return res.status(200).json({
+          status: true,
+          message: "Success",
+          data: {
+            departure: flight_schedulle,
+          },
+        });
+      }
     } catch (error) {
       next(error);
     }
