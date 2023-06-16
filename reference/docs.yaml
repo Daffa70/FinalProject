@@ -1,0 +1,507 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 7itmy0wdvnjfd
+info:
+  title: Airtix
+  version: '1.0'
+  description: Dokumentasi api untuk Final Project tentang ticketing pesawat
+servers:
+  - url: 'http://127.0.0.1:3000'
+paths:
+  /auth/register:
+    post:
+      summary: Register User
+      operationId: post-auth-register
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: user created!
+                    data:
+                      id: 1
+                      name: sabrina
+                      email: daffaammar09@gmail.com
+                      phone: '018921312312'
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: user created!
+                    data:
+                      id: 1
+                      name: sabrina
+                      email: daffaammar09@gmail.com
+                      phone: '018921312312'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email already used!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email already used!
+                    data: null
+      description: Register user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                password:
+                  type: string
+              x-examples:
+                Example 1:
+                  name: sabrina
+                  email: daffaammar09@gmail.com
+                  phone: '018921312312'
+                  password: password
+            examples:
+              Example 1:
+                value:
+                  name: sabrina
+                  email: daffaammar09@gmail.com
+                  phone: '018921312312'
+                  password: password
+      x-internal: false
+    parameters: []
+  /auth/login:
+    post:
+      summary: Login User
+      operationId: post-auth-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: login success!
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6ImRhZmZhYW1tYXIwOUBnbWFpbC5jb20iLCJpYXQiOjE2ODY5Mjc4NDF9.a36I36P4p1A2C3IfGVlKFhqTHSMea2nmROCZJYwyxpg
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: login success!
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6ImRhZmZhYW1tYXIwOUBnbWFpbC5jb20iLCJpYXQiOjE2ODY5Mjc4NDF9.a36I36P4p1A2C3IfGVlKFhqTHSMea2nmROCZJYwyxpg
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+                Example 2:
+                  value:
+                    status: false
+                    message: 'your account is registered with google oauth, you need to login with google oauth!'
+                    data: null
+                Example 3:
+                  value:
+                    status: false
+                    message: password is not valid!
+                    data: null
+      description: Login user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+                  password: password
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: password
+              Example 2:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: ''
+              Example 3:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: passwordsalah
+  /auth/resend-otp:
+    parameters: []
+    post:
+      summary: Resend OTP
+      operationId: post-auth-resend-otp
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: OTP verification has been resent!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: OTP verification has been resent!
+                    data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: Please wait 60 minutes before resending the OTP.
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: Please wait 1 minutes before resending the OTP.
+                    data: null
+      description: Resend OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+  /auth/verify-otp:
+    post:
+      summary: Verify OTP
+      operationId: post-auth-verify-otp
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: User is verified!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: User is verified!
+                    data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+                Example 2:
+                  value:
+                    status: false
+                    message: Incorrect OTP. Please try again
+                    data: null
+      description: Verify otp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                otp:
+                  type: integer
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+                  otp: 529642
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+                  otp: 529642
+  /auth/send-reset-password:
+    post:
+      summary: Send Reset Password
+      operationId: post-auth-send-reset-password
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password mail is send to your email!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: reset password mail is send to your email!
+                    data: null
+      description: Send reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffa.20042@mhs.unesa.ac.id
+            examples:
+              Example 1:
+                value:
+                  email: daffa.20042@mhs.unesa.ac.id
+  /auth/reset-password:
+    post:
+      summary: Reset Password
+      operationId: post-auth-reset-password
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password success!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: reset password success!
+                    data: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password failed!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+                  token:
+                    type: string
+                    x-stoplight:
+                      id: bayj8a4mn7g8t
+              examples:
+                Example 1:
+                  value:
+                    message: invalid token!
+                    token: token
+                Example 2:
+                  value:
+                    message: confirm password does not match!
+                    token: token
+                Example 3:
+                  value:
+                    status: false
+                    message: reset password failed!
+                    data: null
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+          description: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNjg2MzE4MTIyfQ.PJm9lTH48xSXPnx3IEJNcUJbp8IFtCBHfENgo7w_8e8
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+                confirm_new_password:
+                  type: string
+              x-examples:
+                Example 1:
+                  new_password: password123
+                  confirm_new_password: password123
+            examples:
+              Example 1:
+                value:
+                  new_password: password123
+                  confirm_new_password: password123
+      description: Reset password
+    parameters: []
+components:
+  schemas: {}
