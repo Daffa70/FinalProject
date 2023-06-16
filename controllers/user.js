@@ -282,7 +282,7 @@ module.exports = {
       );
       if (updated[0] == 0) {
         return res.status(401).json({
-          status: true,
+          status: false,
           message: `reset password failed!`,
           data: null,
         });
