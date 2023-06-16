@@ -16,6 +16,7 @@ module.exports = {
     password: DB_PASSWORD,
     dialect: DB_DIALECT,
     port: DB_PORT,
+    timezone: "Asia/Jakarta",
   },
   test: {
     host: DB_HOST,
@@ -24,6 +25,7 @@ module.exports = {
     password: DB_PASSWORD,
     dialect: DB_DIALECT,
     port: DB_PORT,
+    timezone: "Asia/Jakarta",
   },
   production: {
     host: DB_HOST,
@@ -32,5 +34,6 @@ module.exports = {
     password: DB_PASSWORD,
     dialect: DB_DIALECT,
     port: DB_PORT,
+    timezone: "Asia/Jakarta",
   },
 };

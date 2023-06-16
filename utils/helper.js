@@ -9,16 +9,20 @@ module.exports = {
     return randomNumber;
   },
 
-  generateBookingCode: () => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    const codeLength = 6;
-    let bookingCode = "";
-
-    for (let i = 0; i < codeLength; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      bookingCode += characters.charAt(randomIndex);
-    }
-
-    return bookingCode;
+  generateBookingCode: (userId) => {
+    const code = userId + generateRandomCode();
+    return code;
   },
 };
+function generateRandomCode() {
+  // Generate a random alphanumeric code, you can customize this based on your requirements
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+
+  for (let i = 0; i < 6; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters.charAt(randomIndex);
+  }
+
+  return code;
+}

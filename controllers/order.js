@@ -9,6 +9,7 @@ const helper = require("../utils/helper");
 const moment = require("moment");
 const notification = require("./notification");
 const { Op, Sequelize } = require("sequelize");
+const midtrans = require("../utils/midtrans");
 
 module.exports = {
   store: async (req, res) => {
@@ -125,19 +126,41 @@ module.exports = {
 
       const { id: user_id } = req.user;
 
-      console.log(scheduleid);
+      const schedulle = await Flight_schedulle.findOne({
+        where: { id: scheduleid },
+      });
+
+      const total_price = await totalPrice(
+        schedulle.price,
+        passengerDetails.length
+      );
+      const booking_code = await helper.generateBookingCode(user_id);
+      const url_midtrans = await midtrans.generateSnapUrl(
+        booking_code,
+        total_price,
+        schedulle.flight_number,
+        schedulle.price,
+        passengerDetails.length,
+        full_name + family_name,
+        email
+      );
+
+      const currentDate = new Date();
+      const fifteenMinutesFromNow = new Date(
+        currentDate.getTime() + 15 * 60000
+      ); // 15 minutes * 60 seconds * 1000 milliseconds
+
       const order = await Order.create({
         user_id,
         full_name,
         family_name,
         email,
         schedulle_id: scheduleid,
-        booking_code: helper.generateBookingCode(),
-      });
-
-      const payment = await Payment.create({
-        order_id: order.id,
-        status: "UNPAID",
+        booking_code,
+        total_price,
+        url_midtrans,
+        payment_status: "UNPAID",
+        last_payment_date: fifteenMinutesFromNow,
       });
 
       for (const passenger of passengerDetails) {
@@ -225,10 +248,6 @@ module.exports = {
             model: Passenger,
             as: "passengers",
           },
-          {
-            model: Payment,
-            as: "payment",
-          },
         ],
       });
 
@@ -249,4 +268,30 @@ module.exports = {
       throw error;
     }
   },
+  notifyMidtrans: async (req, res) => {
+    const transactionStatus = req.body;
+    let status;
+
+    console.log(transactionStatus);
+    if (transactionStatus.transaction_status === "settlement") {
+      status = "ISSUED";
+    } else {
+      status = transactionStatus.transaction_status.toUpperCase();
+    }
+
+    const order = Order.update(
+      { payment_status: status },
+      {
+        where: { booking_code: transactionStatus.order_id },
+      }
+    );
+
+    res.status(200).send("success");
+  },
 };
+
+function totalPrice(price, totalPassanger) {
+  const totalPrice = price * totalPassanger;
+
+  return totalPrice;
+}
