@@ -276,6 +276,7 @@ module.exports = {
         departureTime.getDate()
       );
       endDate.setDate(endDate.getDate() + 1);
+      console.log(departure_time);
 
       const flight_schedulle = await Flight_schedulle.findAll({
         include: [
@@ -301,11 +302,12 @@ module.exports = {
           {
             model: Seat,
             as: "seats",
+            order: ["id"],
           },
         ],
         where: {
           departure_date: {
-            [Op.between]: [startDate, endDate],
+            [Op.eq]: departure_time,
           },
           seat_available: {
             [Op.gte]: person,
@@ -358,7 +360,7 @@ module.exports = {
           ],
           where: {
             departure_date: {
-              [Op.between]: [startDate, endReturnDate],
+              [Op.between]: [departure_time, return_time],
             },
             seat_available: {
               [Op.gte]: person,

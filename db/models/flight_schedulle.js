@@ -54,28 +54,28 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  Flight_schedulle.beforeCreate((flightSchedulle) => {
-    if (flightSchedulle.departure_time) {
-      const departureDateTime = new Date(flightSchedulle.departure_time);
-      flightSchedulle.departure_date = departureDateTime
-        .toISOString()
-        .split("T")[0];
-      flightSchedulle.departure_time = departureDateTime
-        .toISOString()
-        .split("T")[1]
-        .slice(0, 8);
-    }
+  // Flight_schedulle.beforeCreate((flightSchedulle) => {
+  //   if (flightSchedulle.departure_time) {
+  //     const departureDateTime = new Date(flightSchedulle.departure_time);
+  //     flightSchedulle.departure_date = departureDateTime
+  //       .toISOString()
+  //       .split("T")[0];
+  //     flightSchedulle.departure_time = departureDateTime
+  //       .toISOString()
+  //       .split("T")[1]
+  //       .slice(0, 8);
+  //   }
 
-    if (flightSchedulle.arrival_time) {
-      const arrivalDateTime = new Date(flightSchedulle.arrival_time);
-      flightSchedulle.arrival_date = arrivalDateTime
-        .toISOString()
-        .split("T")[0];
-      flightSchedulle.arrival_time = arrivalDateTime
-        .toISOString()
-        .split("T")[1]
-        .slice(0, 8);
-    }
-  });
+  //   if (flightSchedulle.arrival_time) {
+  //     const arrivalDateTime = new Date(flightSchedulle.arrival_time);
+  //     flightSchedulle.arrival_date = arrivalDateTime
+  //       .toISOString()
+  //       .split("T")[0];
+  //     flightSchedulle.arrival_time = arrivalDateTime
+  //       .toISOString()
+  //       .split("T")[1]
+  //       .slice(0, 8);
+  //   }
+  // });
   return Flight_schedulle;
 };

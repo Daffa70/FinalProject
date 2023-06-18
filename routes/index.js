@@ -14,6 +14,10 @@ const flight_schedulle = require("../controllers/flight_schedulle");
 const flight_price = require("../controllers/flight_price");
 const seat_class = require("../controllers/seat_class");
 const notification = require("../controllers/notification");
+const media = require("../controllers/media");
+const multer = require("multer")();
+
+const seeder = require("../controllers/seeder");
 
 router.get("/", (req, res) => {
   return res.status(200).json({
@@ -35,11 +39,17 @@ router.get("/error", (req, res) => {
 //important!, using for front end
 router.post("/auth/register", user.register);
 router.post("/auth/login", user.login);
-router.get("/auth/whoami", middlewares.auth, user.whoami);
+// router.get("/auth/whoami", middlewares.auth, user.whoami);
 router.post("/auth/resend-otp", user.resendOtp);
 router.post("/auth/verify-otp", user.verifyOtp);
 router.post("/auth/send-reset-password", user.sendResetPassword);
 router.post("/auth/reset-password", user.resetPassword);
+router.post(
+  "/update-profile",
+  middlewares.auth,
+  multer.single("media"),
+  user.update
+);
 
 //home
 router.post("/flight_schedulles_detail", flight_schedulle.getSearch);
@@ -54,6 +64,8 @@ router.get("/notification-user", middlewares.auth, notification.getNotify);
 router.get("/orders-user", middlewares.auth, order.showUser);
 
 ////
+
+router.get("/seeder-flight", seeder.store);
 router.get("/airlines", airline.index);
 router.get("/airlines/:airline_id", airline.show);
 router.post("/airlines", airline.store);
