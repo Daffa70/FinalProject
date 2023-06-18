@@ -6,11 +6,12 @@ const {
   Flight_schedulle,
 } = require("../db/models");
 const helper = require("../utils/helper");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const notification = require("./notification");
 const { Op, Sequelize } = require("sequelize");
 const midtrans = require("../utils/midtrans");
 
+moment.tz.setDefault("Asia/Jakarta");
 module.exports = {
   store: async (req, res) => {
     try {
@@ -145,10 +146,8 @@ module.exports = {
         email
       );
 
-      const currentDate = new Date();
-      const fifteenMinutesFromNow = new Date(
-        currentDate.getTime() + 15 * 60000
-      ); // 15 minutes * 60 seconds * 1000 milliseconds
+      const currentDate = moment();
+      const fifteenMinutesFromNow = moment(currentDate).add(15, "minutes");
 
       const order = await Order.create({
         user_id,

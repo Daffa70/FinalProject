@@ -16,10 +16,20 @@ module.exports = {
       }
 
       const data = await jwt.verify(authorization, JWT_SECRET_KEY);
+
+      if (!data.email_verify_at) {
+        return res.status(401).json({
+          status: false,
+          message: "you're not verified!",
+          data: null,
+        });
+      }
+
       req.user = {
         id: data.id,
         name: data.name,
         email: data.email,
+        email_verify_at: email_verify_at,
       };
 
       next();

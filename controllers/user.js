@@ -4,7 +4,10 @@ const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
 const helper = require("../utils/helper");
 const nodemailer = require("../utils/nodemailer");
-const oauth2 = require('../utils/oauth2');
+const oauth2 = require("../utils/oauth2");
+const imagekit = require("../utils/imagekit");
+const multer = require("multer");
+const upload = multer().single("media");
 
 module.exports = {
   register: async (req, res) => {
@@ -27,7 +30,7 @@ module.exports = {
         email,
         phone,
         password: hashPassword,
-        user_type: 'basic'
+        user_type: "basic",
       });
 
       const otp_num = helper.generateOtpNumber();
@@ -73,13 +76,14 @@ module.exports = {
         });
       }
 
-      if(user.user_type == 'google' && user.password == null){
+      if (user.user_type == "google" && user.password == null) {
         return res.status(400).json({
-            status: false,
-            message: 'your account is registered with google oauth, you need to login with google oauth!',
-            data: null
+          status: false,
+          message:
+            "your account is registered with google oauth, you need to login with google oauth!",
+          data: null,
         });
-    }
+      }
 
       const passwordCorrect = await bcryp.compare(password, user.password);
       if (!passwordCorrect) {
@@ -94,6 +98,7 @@ module.exports = {
         id: user.id,
         name: user.name,
         email: user.email,
+        email_verify_at: user.email_verify_at,
       };
 
       const token = await jwt.sign(payload, JWT_SECRET_KEY);
@@ -299,39 +304,66 @@ module.exports = {
   },
 
   googleOauth2: async (req, res) => {
-    const {code} = req.query;
-    if(!code){
-        const googleLoginUrl = oauth2.generateAuthUrl();
-        return res.redirect(googleLoginUrl);
+    const { code } = req.query;
+    if (!code) {
+      const googleLoginUrl = oauth2.generateAuthUrl();
+      return res.redirect(googleLoginUrl);
     }
 
     await oauth2.setCredentials(code);
-    const {data} = await oauth2.getUserData();
+    const { data } = await oauth2.getUserData();
 
-    let user = await User.findOne({where: {email: data.email}});
-    if(!user){
-        user = await User.create({
-            name: data.name,
-            email: data.email,
-            user_type: 'google'
-        });
+    let user = await User.findOne({ where: { email: data.email } });
+    if (!user) {
+      user = await User.create({
+        name: data.name,
+        email: data.email,
+        user_type: "google",
+        email_verify_at: new Date(),
+      });
     }
 
     const payload = {
-        id: user.id,
-        name: user.name,
-        email: user.email
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      email_verify_at: user.email_verify_at,
     };
 
     const token = await jwt.sign(payload, JWT_SECRET_KEY);
     return res.status(200).json({
       status: true,
-      message: 'login success!',
+      message: "login success!",
       data: {
-          token: token
-      }
+        token: token,
+      },
     });
 
     // return res.json(data);
-  }
+  },
+  update: async (req, res) => {
+    try {
+      const { name, phone } = req.body;
+      const user = req.user;
+
+      const stringFile = req.file.buffer.toString("base64");
+      const uploadFile = await imagekit.upload({
+        fileName: req.file.originalname,
+        file: stringFile,
+      });
+
+      User.update(
+        { name: name, phone: phone, avatar: uploadFile.url },
+        { where: { id: user.id } }
+      );
+
+      return res.status(200).json({
+        status: true,
+        message: "update profile success!",
+        data: null,
+      });
+    } catch (err) {
+      throw err;
+    }
+  },
 };
