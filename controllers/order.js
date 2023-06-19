@@ -274,8 +274,18 @@ module.exports = {
     console.log(transactionStatus);
     if (transactionStatus.transaction_status === "settlement") {
       status = "ISSUED";
+      notification.sendNotification(
+        user_id,
+        "Pembayaran Anda Sudah Masuk",
+        "Pesanan Anda Sudah Kami Terima"
+      );
     } else {
       status = transactionStatus.transaction_status.toUpperCase();
+      notification.sendNotification(
+        user_id,
+        `Pembayaran Anda ${status}`,
+        `Pembayaran Anda ${status}`
+      );
     }
 
     const order = Order.update(
