@@ -21,6 +21,12 @@ module.exports = {
           { payment_status: "expired" },
           { where: { id: order.id } }
         );
+
+        notification.sendNotification(
+          order.user_id,
+          "Pembayaran Anda Expired",
+          "Pembayaran Anda Sudah Mencapai Batas Waktu"
+        );
       }
     } catch (error) {
       throw error;

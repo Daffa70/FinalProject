@@ -36,10 +36,11 @@ router.get("/error", (req, res) => {
   return res.status(500).json(data);
 });
 
+router.post("/notification-midtrans", order.notifyMidtrans);
 //important!, using for front end
 router.post("/auth/register", user.register);
 router.post("/auth/login", user.login);
-// router.get("/auth/whoami", middlewares.auth, user.whoami);
+router.get("/auth/whoami", middlewares.auth, user.whoami);
 router.post("/auth/resend-otp", user.resendOtp);
 router.post("/auth/verify-otp", user.verifyOtp);
 router.post("/auth/send-reset-password", user.sendResetPassword);
@@ -57,7 +58,6 @@ router.get("/airports/search/:citystate", airport.getSearchStateCountry);
 
 //checkout process
 router.post("/checkout-user", middlewares.auth, order.checkout);
-router.post("/notification-midtrans", order.notifyMidtrans);
 
 //user
 router.get("/notification-user", middlewares.auth, notification.getNotify);
