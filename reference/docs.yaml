@@ -503,9 +503,9 @@ paths:
                   confirm_new_password: password123
       description: Reset password
     parameters: []
-  /flight_schedulles:
+  /flight_schedulles_detail:
     post:
-      summary: Create Flight Schedulles
+      summary: Flight Schedulle Search
       operationId: post-flight_schedulles
       responses:
         '200':
@@ -520,18 +520,33 @@ paths:
                   message:
                     type: string
                   data:
-                    type: string
+                    type: object
+                    properties:
+                      departure:
+                        type: string
+                      return:
+                        type: string
                 x-examples:
                   Example 1:
                     status: true
-                    message: success
-                    data: flight_schedulle
+                    message: Success
+                    data:
+                      departure: flight_schedulle
+                      return: flight_schedulle_return
               examples:
-                Create Success:
+                Search Success:
                   value:
                     status: true
-                    message: success
-                    data: flight_schedulle
+                    message: Success
+                    data:
+                      departure: flight_schedulle
+                      return: flight_schedulle_return
+                Search Success 2:
+                  value:
+                    status: true
+                    message: Success
+                    data:
+                      departure: flight_schedulle
         '404':
           description: Not Found
           content:
@@ -550,74 +565,33 @@ paths:
                     type: string
                   data: {}
               examples:
-                Flight Schedulle Exist:
+                Flight Schedulle Doesn't Exist:
                   value:
                     status: false
-                    message: flight_schedulle is already exist
+                    message: Can't find flight_schedule
                     data: null
-                Airline 404:
-                  value:
-                    status: false
-                    message: airline is not found
-                    data: null
-                Departure Airport 404:
-                  value:
-                    status: false
-                    message: depature airport is not found
-                    data: null
-                Arrival Airport 404:
-                  value:
-                    status: false
-                    message: arrival airport is not found
-                    data: null
-      description: Create flight schedulles
+      description: Search flight schedulles
       requestBody:
         content:
-          application/json:
-            schema:
-              type: object
-              x-examples:
-                Example 1:
-                  airline_id: '2'
-                  departure_time: 20
-                  arrival_time: 22
-                  departure_airport_id: 2
-                  arrival_airport_id: 2
-              properties:
-                airline_id:
-                  type: string
-                departure_time:
-                  type: number
-                  format: float
-                  example: 20
-                arrival_time:
-                  type: number
-                  format: float
-                  example: 20
-                departure_airport_id:
-                  type: integer
-                arrival_airport_id:
-                  type: integer
-            examples:
-              Create Schedulle:
-                value:
-                  airline_id: '2'
-                  departure_time: 20
-                  arrival_time: 22
-                  departure_airport_id: 2
-                  arrival_airport_id: 2
-    get:
-      summary: Get All Flight Schedulles
-      operationId: get-flight_schedulles
-      responses:
-        '200':
-          description: OK
-      description: Get all flight schedulles
-      requestBody:
-        content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               properties: {}
+            examples:
+              Search Flight Schedulles:
+                value:
+                  'dep_airport:SUB arr_airport:DPS departure_time:2023-06-25 //return_time:2023-06-19 seatclass:Economy person:2': null
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: sort
+          description: duration_asc
+        - schema:
+            type: string
+          in: query
+          name: page
+          description: '3'
+    parameters: []
 components:
   schemas: {}
