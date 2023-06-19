@@ -6,7 +6,7 @@ info:
   version: '1.0'
   description: Dokumentasi api untuk Final Project tentang ticketing pesawat
 servers:
-  - url: 'http://127.0.0.1:3000'
+  - url: 'http://airtix-develop.up.railway.app'
 paths:
   /auth/register:
     post:
@@ -45,7 +45,7 @@ paths:
                       email: daffaammar09@gmail.com
                       phone: '018921312312'
               examples:
-                Example 1:
+                Create Success:
                   value:
                     status: true
                     message: user created!
@@ -72,7 +72,7 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Email already used:
                   value:
                     status: false
                     message: email already used!
@@ -99,7 +99,7 @@ paths:
                   phone: '018921312312'
                   password: password
             examples:
-              Example 1:
+              Register User:
                 value:
                   name: sabrina
                   email: daffaammar09@gmail.com
@@ -135,7 +135,7 @@ paths:
                     data:
                       token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6ImRhZmZhYW1tYXIwOUBnbWFpbC5jb20iLCJpYXQiOjE2ODY5Mjc4NDF9.a36I36P4p1A2C3IfGVlKFhqTHSMea2nmROCZJYwyxpg
               examples:
-                Example 1:
+                Login Success:
                   value:
                     status: true
                     message: login success!
@@ -159,17 +159,17 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Email 404:
                   value:
                     status: false
                     message: email not found!
                     data: null
-                Example 2:
+                Google Oauth Login:
                   value:
                     status: false
                     message: 'your account is registered with google oauth, you need to login with google oauth!'
                     data: null
-                Example 3:
+                Credential invalid:
                   value:
                     status: false
                     message: password is not valid!
@@ -190,15 +190,15 @@ paths:
                   email: daffaammar09@gmail.com
                   password: password
             examples:
-              Example 1:
+              Login:
                 value:
                   email: daffaammar09@gmail.com
                   password: password
-              Example 2:
+              Google Oauth Login:
                 value:
                   email: daffaammar09@gmail.com
                   password: ''
-              Example 3:
+              Credential Invalid:
                 value:
                   email: daffaammar09@gmail.com
                   password: passwordsalah
@@ -226,7 +226,7 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Resent Success:
                   value:
                     status: true
                     message: OTP verification has been resent!
@@ -249,7 +249,7 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Email 404:
                   value:
                     status: false
                     message: email not found!
@@ -272,7 +272,7 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                OTP Sent Waiting:
                   value:
                     status: false
                     message: Please wait 1 minutes before resending the OTP.
@@ -290,7 +290,7 @@ paths:
                 Example 1:
                   email: daffaammar09@gmail.com
             examples:
-              Example 1:
+              Resend OTP:
                 value:
                   email: daffaammar09@gmail.com
   /auth/verify-otp:
@@ -316,7 +316,7 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Verify Success:
                   value:
                     status: true
                     message: User is verified!
@@ -339,12 +339,12 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Email 404:
                   value:
                     status: false
                     message: email not found!
                     data: null
-                Example 2:
+                OTP Incorrect:
                   value:
                     status: false
                     message: Incorrect OTP. Please try again
@@ -365,7 +365,7 @@ paths:
                   email: daffaammar09@gmail.com
                   otp: 529642
             examples:
-              Example 1:
+              Verify OTP:
                 value:
                   email: daffaammar09@gmail.com
                   otp: 529642
@@ -392,7 +392,7 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Mail Send Success:
                   value:
                     status: true
                     message: reset password mail is send to your email!
@@ -410,7 +410,7 @@ paths:
                 Example 1:
                   email: daffa.20042@mhs.unesa.ac.id
             examples:
-              Example 1:
+              Send Reset Password:
                 value:
                   email: daffa.20042@mhs.unesa.ac.id
   /auth/reset-password:
@@ -436,7 +436,7 @@ paths:
                     type: string
                   data: {}
               examples:
-                Example 1:
+                Reset Success:
                   value:
                     status: true
                     message: reset password success!
@@ -463,15 +463,15 @@ paths:
                     x-stoplight:
                       id: bayj8a4mn7g8t
               examples:
-                Example 1:
+                Invalid Token:
                   value:
                     message: invalid token!
                     token: token
-                Example 2:
+                Confirm Password Invalid:
                   value:
                     message: confirm password does not match!
                     token: token
-                Example 3:
+                Reset Failed:
                   value:
                     status: false
                     message: reset password failed!
@@ -497,11 +497,127 @@ paths:
                   new_password: password123
                   confirm_new_password: password123
             examples:
-              Example 1:
+              Reset Password:
                 value:
                   new_password: password123
                   confirm_new_password: password123
       description: Reset password
     parameters: []
+  /flight_schedulles:
+    post:
+      summary: Create Flight Schedulles
+      operationId: post-flight_schedulles
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: success
+                    data: flight_schedulle
+              examples:
+                Create Success:
+                  value:
+                    status: true
+                    message: success
+                    data: flight_schedulle
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: depature airport is not found
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Flight Schedulle Exist:
+                  value:
+                    status: false
+                    message: flight_schedulle is already exist
+                    data: null
+                Airline 404:
+                  value:
+                    status: false
+                    message: airline is not found
+                    data: null
+                Departure Airport 404:
+                  value:
+                    status: false
+                    message: depature airport is not found
+                    data: null
+                Arrival Airport 404:
+                  value:
+                    status: false
+                    message: arrival airport is not found
+                    data: null
+      description: Create flight schedulles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              x-examples:
+                Example 1:
+                  airline_id: '2'
+                  departure_time: 20
+                  arrival_time: 22
+                  departure_airport_id: 2
+                  arrival_airport_id: 2
+              properties:
+                airline_id:
+                  type: string
+                departure_time:
+                  type: number
+                  format: float
+                  example: 20
+                arrival_time:
+                  type: number
+                  format: float
+                  example: 20
+                departure_airport_id:
+                  type: integer
+                arrival_airport_id:
+                  type: integer
+            examples:
+              Create Schedulle:
+                value:
+                  airline_id: '2'
+                  departure_time: 20
+                  arrival_time: 22
+                  departure_airport_id: 2
+                  arrival_airport_id: 2
+    get:
+      summary: Get All Flight Schedulles
+      operationId: get-flight_schedulles
+      responses:
+        '200':
+          description: OK
+      description: Get all flight schedulles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
 components:
   schemas: {}
