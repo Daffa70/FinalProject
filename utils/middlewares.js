@@ -29,7 +29,7 @@ module.exports = {
         id: data.id,
         name: data.name,
         email: data.email,
-        email_verify_at: email_verify_at,
+        email_verify_at: data.email_verify_at,
       };
 
       next();
