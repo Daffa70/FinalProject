@@ -30,6 +30,9 @@ module.exports = {
         name: data.name,
         email: data.email,
         email_verify_at: data.email_verify_at,
+        phone: data.phone,
+        user_type: data.user_type,
+        avatar: data.avatar,
       };
 
       next();
