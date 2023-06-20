@@ -317,7 +317,7 @@ module.exports = {
       });
 
       if (!flight_schedulle || flight_schedulle.length === 0) {
-        return res.status(401).json({
+        return res.status(404).json({
           status: false,
           message: "Can't find flight_schedule",
           data: null,
