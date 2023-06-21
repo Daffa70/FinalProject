@@ -205,7 +205,8 @@ module.exports = {
 
   showUser: async (req, res) => {
     try {
-      const { startDateFilter, endDateFilter, flightNumber } = req.query;
+      const { startDateFilter, endDateFilter, flightNumber, sort, page } =
+        req.query;
 
       let whereCondition = {
         user_id: req.user.id,
@@ -231,10 +232,24 @@ module.exports = {
         };
       }
 
+      let sortBy = "";
+      let orderBy = "";
+      if (sort == "created_asc" || !sort) {
+        sortBy = "createdAt";
+        orderBy = "ASC";
+      } else if (sort == "crerated_desc") {
+        sortBy = "createdAt";
+        orderBy = "desc";
+      }
+
       // Add the booking_code filter if flightNumber is not null
       if (flightNumber) {
         whereCondition.booking_code = flightNumber;
       }
+
+      const pageSize = 20;
+      const offset = (page - 1) * pageSize; // Calculate the offset based on the page number and page size
+      const limit = parseInt(pageSize); // Convert the pageSize to an integer
 
       const order = await Order.findAll({
         where: whereCondition,
@@ -248,6 +263,9 @@ module.exports = {
             as: "passengers",
           },
         ],
+        order: [[sortBy, orderBy]],
+        offset,
+        limit,
       });
 
       if (!order || order == "") {
