@@ -123,7 +123,7 @@ module.exports = {
       const { full_name, family_name, email } = req.body;
       const passengerDetails = req.body.passengers;
 
-      const { scheduleid } = req.query;
+      const { scheduleid, schedulereturnid } = req.query;
 
       const { id: user_id } = req.user;
 
@@ -131,10 +131,24 @@ module.exports = {
         where: { id: scheduleid },
       });
 
-      const total_price = await totalPrice(
+      let total_price = await totalPrice(
         schedulle.price,
-        passengerDetails.length
+        passengerDetails.length,
+        null
       );
+
+      if (schedulereturnid) {
+        const schedullereturn = await Flight_schedulle.findOne({
+          where: { id: schedulereturnid },
+        });
+
+        total_price = await totalPrice(
+          schedulle.price,
+          passengerDetails.length,
+          schedullereturn.price
+        );
+      }
+
       const booking_code = await helper.generateBookingCode(user_id);
       const url_midtrans = await midtrans.generateSnapUrl(
         booking_code,
@@ -155,6 +169,7 @@ module.exports = {
         family_name,
         email,
         schedulle_id: scheduleid,
+        schedulle_return_id: schedulereturnid,
         booking_code,
         total_price,
         url_midtrans,
@@ -174,7 +189,9 @@ module.exports = {
           issuing_country: passenger.issuing_country,
           identity_expired: passenger.identity_expired,
           schedulle_id: scheduleid,
+          schedulle_return_id: schedulereturnid,
           seat_id: passenger.seat_id,
+          seat_return_id: passenger.seat_return_id,
         });
 
         await Seat.update(
@@ -185,6 +202,17 @@ module.exports = {
         await Flight_schedulle.decrement("seat_available", {
           where: { id: scheduleid },
         });
+
+        if (schedulereturnid) {
+          await Seat.update(
+            { status: "unavaiable" },
+            { where: { id: passenger.seat_return_id } }
+          );
+
+          await Flight_schedulle.decrement("seat_available", {
+            where: { id: schedulereturnid },
+          });
+        }
       }
 
       notification.sendNotification(
@@ -317,8 +345,13 @@ module.exports = {
   },
 };
 
-function totalPrice(price, totalPassanger) {
-  const totalPrice = price * totalPassanger;
+function totalPrice(price, totalPassanger, price_return) {
+  let totalPrice = price * totalPassanger;
+
+  if (price_return) {
+    const totalPriceReturn = price_return * totalPassanger;
+    totalPrice = totalPrice + totalPriceReturn;
+  }
 
   return totalPrice;
 }

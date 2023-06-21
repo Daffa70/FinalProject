@@ -91,7 +91,11 @@ function generateSeats(schedule_id, seat_layout, total_seat) {
   }
 
   const [leftSeats, rightSeats] = seatLayout.split("-").map(Number);
-  const totalSeats = total_seat; // Specify the total number of seats
+
+  let totalSeats = 30;
+  if (total_seat) {
+    totalSeats = total_seat;
+  }
 
   const rowCount = Math.ceil(totalSeats / (leftSeats + rightSeats));
 

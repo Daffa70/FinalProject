@@ -5,9 +5,7 @@ const passenger = require("../controllers/passenger");
 const order = require("../controllers/order");
 const payment = require("../controllers/payment");
 const payment_method = require("../controllers/payment_method");
-
 const middlewares = require("../utils/middlewares");
-
 const airline = require("../controllers/airline");
 const airport = require("../controllers/airport");
 const flight_schedulle = require("../controllers/flight_schedulle");
@@ -16,8 +14,8 @@ const seat_class = require("../controllers/seat_class");
 const notification = require("../controllers/notification");
 const media = require("../controllers/media");
 const multer = require("multer")();
-
 const seeder = require("../controllers/seeder");
+const refreshtoken = require("../controllers/refreshtoken");
 
 router.get("/", (req, res) => {
   return res.status(200).json({
@@ -51,6 +49,7 @@ router.post(
   multer.single("media"),
   user.update
 );
+router.post("/refresh-token", refreshtoken.refreshToken);
 
 //home
 router.post("/flight_schedulles_detail", flight_schedulle.getSearch);
@@ -59,6 +58,7 @@ router.get("/airports", airport.index);
 
 //checkout process
 router.post("/checkout-user", middlewares.auth, order.checkout);
+router.get("/schedulles-detail", flight_schedulle.show);
 
 //user
 router.get("/notification-user", middlewares.auth, notification.getNotify);
@@ -79,7 +79,6 @@ router.put("/airports/:airport_id", airport.update);
 router.delete("/airports/:airport_id", airport.destroy);
 
 router.get("/flight_schedulles", flight_schedulle.index);
-router.get("/flight_schedulles/:flight_schedulle_id", flight_schedulle.show);
 router.post("/flight_schedulles", flight_schedulle.store);
 router.put("/flight_schedulles/:flight_schedulle_id", flight_schedulle.update);
 router.delete(
