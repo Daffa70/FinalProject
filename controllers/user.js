@@ -61,7 +61,7 @@ module.exports = {
         if(i == 3){
           return res.status(400).json({
             status: false,
-            message: `${errorMessage[0]}, ${errorMessage[1]}, ${errorMessage[2]} fields should not be empty!`,
+            message: `${errorMessage[0]}, ${errorMessage[1]}, and ${errorMessage[2]} fields should not be empty!`,
             data: null,
           });
         }

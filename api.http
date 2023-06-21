@@ -39,3 +39,16 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/whoami
 
+###
+POST http://127.0.0.1:3000/flight_schedulles_detail?sort=duration_asc&page=1
+Content-Type: application/json
+
+{
+    "dep_airport": "SUB",
+    "arr_airport": "DPS",
+    "departure_time": "2023-06-25",
+    "return_time": "",
+    "seatclass": "Economy",
+    "person": 2
+}
+
