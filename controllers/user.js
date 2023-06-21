@@ -14,6 +14,59 @@ module.exports = {
     try {
       const { name, email, phone, password } = req.body;
 
+      // check requirement fields
+      if(name == '' || email == '' || phone == '' || password == ''){
+        let i = 0;
+        let errorName = '', errorEmail = '', errorPhone = '', errorPassword = '';
+        let errorMessage = [];
+        if (name == ''){
+          errorName = 'Name';
+          errorMessage[i] = errorName;
+          i = i + 1;
+        }
+        if (email == ''){
+          errorEmail = 'Email';
+          errorMessage[i] = errorEmail;
+          i = i + 1;
+        }
+        if (phone == ''){
+          errorPhone = 'Phone';
+          errorMessage[i] = errorPhone;
+          i = i + 1;
+        }
+        if (password == ''){
+          errorPassword = 'Password';
+          errorMessage[i] = errorPassword;
+          i = i + 1;
+        }
+        if(i == 1){
+          return res.status(400).json({
+            status: false,
+            message: `${errorMessage[0]} field should not be empty!`,
+            data: null,
+          });
+        }
+        if(i == 2){
+          return res.status(400).json({
+            status: false,
+            message: `${errorMessage[0]} and ${errorMessage[1]} fields should not be empty!`,
+            data: null,
+          });
+        }
+        if(i == 3){
+          return res.status(400).json({
+            status: false,
+            message: `${errorMessage[0]}, ${errorMessage[1]}, ${errorMessage[2]} fields should not be empty!`,
+            data: null,
+          });
+        }
+        return res.status(400).json({
+          status: false,
+          message: `Fields should not be empty!`,
+          data: null,
+        });
+      }
+
       const exist = await User.findOne({ where: { email } });
       if (exist) {
         return res.status(400).json({
@@ -66,6 +119,14 @@ module.exports = {
   login: async (req, res) => {
     try {
       const { email, password } = req.body;
+
+      if(email == '' || password == ''){
+        return res.status(400).json({
+          status: false,
+          message: "email or password should not be empty!",
+          data: null,
+        }); 
+      }
 
       const user = await User.findOne({ where: { email } });
       if (!user) {
