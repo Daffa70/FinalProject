@@ -1,3 +1,4 @@
+const e = require("express");
 const {
   Flight_schedulle,
   Airline,
@@ -156,10 +157,17 @@ module.exports = {
   },
   show: async (req, res, next) => {
     try {
-      const { flight_schedulle_id } = req.params;
+      const { flight_schedulle_id, flight_schedulle_return_id } = req.query;
 
       const flight_schedulle = await Flight_schedulle.findOne({
         where: { id: flight_schedulle_id },
+        include: [
+          "airplane",
+          "departure_airport",
+          "arrival_airport",
+          "class",
+          "seats",
+        ],
       });
 
       if (!flight_schedulle) {
@@ -169,11 +177,36 @@ module.exports = {
           data: null,
         });
       }
-      return res.status(200).json({
-        status: true,
-        message: "success",
-        data: flight_schedulle,
-      });
+
+      if (flight_schedulle_return_id) {
+        const flight_schedulle_return = await Flight_schedulle.findOne({
+          where: { id: flight_schedulle_return_id },
+          include: [
+            "airplane",
+            "departure_airport",
+            "arrival_airport",
+            "class",
+            "seats",
+          ],
+        });
+
+        return res.status(200).json({
+          status: true,
+          message: "success",
+          data: {
+            departure: flight_schedulle,
+            return: flight_schedulle_return,
+          },
+        });
+      } else {
+        return res.status(200).json({
+          status: true,
+          message: "success",
+          data: {
+            departure: flight_schedulle,
+          },
+        });
+      }
     } catch (error) {
       next(error);
     }

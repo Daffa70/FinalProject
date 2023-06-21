@@ -1,7 +1,12 @@
 const { User, OtpVerify } = require("../db/models");
 const bcryp = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET_KEY } = process.env;
+const {
+  JWT_SECRET_KEY,
+  JWT_EXPIRATION_TIME,
+  JWT_REFRESH_SECRET_KEY,
+  JWT_REFRESH_EXPIRATION_TIME,
+} = process.env;
 const helper = require("../utils/helper");
 const nodemailer = require("../utils/nodemailer");
 const oauth2 = require("../utils/oauth2");
@@ -165,12 +170,20 @@ module.exports = {
         avatar: user.avatar,
       };
 
-      const token = await jwt.sign(payload, JWT_SECRET_KEY);
+      const token = await jwt.sign(payload, JWT_SECRET_KEY, {
+        expiresIn: JWT_EXPIRATION_TIME,
+      });
+
+      const refreshToken = await jwt.sign(payload, JWT_REFRESH_SECRET_KEY, {
+        expiresIn: JWT_REFRESH_EXPIRATION_TIME,
+      });
+
       return res.status(200).json({
         status: true,
         message: "login success!",
         data: {
           token: token,
+          refreshToken: refreshToken,
         },
       });
     } catch (error) {
@@ -196,7 +209,9 @@ module.exports = {
     try {
       const { email, otp } = req.body;
       const user = await User.findOne({
-        email: email,
+        where: {
+          email: email,
+        },
       });
 
       if (!user) {
@@ -208,8 +223,13 @@ module.exports = {
       }
 
       const checkOtp = await OtpVerify.findOne({
-        user_id: 5,
+        where: {
+          user_id: user.id,
+        },
       });
+
+      console.log(user.id);
+      console.log(checkOtp.user_id);
 
       // console.log(checkOtp.user_id);
 
@@ -397,12 +417,19 @@ module.exports = {
       avatar: user.avatar,
     };
 
-    const token = await jwt.sign(payload, JWT_SECRET_KEY);
+    const token = await jwt.sign(payload, JWT_SECRET_KEY, {
+      expiresIn: JWT_EXPIRATION_TIME,
+    });
+
+    const refreshToken = await jwt.sign(payload, JWT_REFRESH_SECRET_KEY, {
+      expiresIn: JWT_REFRESH_EXPIRATION_TIME,
+    });
     return res.status(200).json({
       status: true,
       message: "login success!",
       data: {
         token: token,
+        refreshToken: refreshToken,
       },
     });
 

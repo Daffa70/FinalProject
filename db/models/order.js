@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
         as: "schedulle",
       });
 
+      models.Order.belongsTo(models.Flight_schedulle, {
+        foreignKey: "schedulle_id",
+        as: "schedulle_return",
+      });
+
       models.Order.hasMany(models.Passenger, {
         foreignKey: "order_id",
         as: "passengers",
@@ -33,6 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       email: DataTypes.STRING,
       phone: DataTypes.INTEGER,
       schedulle_id: DataTypes.INTEGER,
+      schedulle_return_id: DataTypes.INTEGER,
       booking_code: DataTypes.STRING,
       total_price: DataTypes.INTEGER,
       url_midtrans: DataTypes.STRING,
