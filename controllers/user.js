@@ -363,7 +363,7 @@ module.exports = {
         { where: { id: user.id } }
       );
 
-      return res.status(200).json({
+      return res.status(201).json({
         status: true,
         message: "update profile success!",
         data: null,

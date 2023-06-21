@@ -231,7 +231,7 @@ module.exports = {
 
   getSearch: async (req, res, next) => {
     try {
-      const { sort } = req.query;
+      const { sort, page } = req.query;
       const {
         dep_airport,
         arr_airport,
@@ -240,6 +240,8 @@ module.exports = {
         seatclass,
         person,
       } = req.body;
+
+      const pageSize = 20;
 
       let sortBy = "";
       let orderBy = "";
@@ -253,11 +255,14 @@ module.exports = {
         sortBy = "arrival_time";
         orderBy = "ASC";
       } else if (sort == "arrival_desc") {
-        sortBy = "departure_time";
+        sortBy = "arrival_time";
         orderBy = "DESC";
-      } else if (sort == "arrival_asc") {
+      } else if (sort == "departure_asc") {
         sortBy = "departure_time";
         orderBy = "ASC";
+      } else if (sort == "departure_asc") {
+        sortBy = "departure_time";
+        orderBy = "DESC";
       }
 
       // Parse the departure_time string into a Date object
@@ -276,7 +281,9 @@ module.exports = {
         departureTime.getDate()
       );
       endDate.setDate(endDate.getDate() + 1);
-      console.log(departure_time);
+
+      const offset = (page - 1) * pageSize; // Calculate the offset based on the page number and page size
+      const limit = parseInt(pageSize); // Convert the pageSize to an integer
 
       const flight_schedulle = await Flight_schedulle.findAll({
         include: [
@@ -314,6 +321,8 @@ module.exports = {
           },
         },
         order: [[sortBy, orderBy]],
+        offset,
+        limit,
       });
 
       if (!flight_schedulle || flight_schedulle.length === 0) {
@@ -367,6 +376,8 @@ module.exports = {
             },
           },
           order: [[sortBy, orderBy]],
+          offset, // Apply the offset
+          limit, // Apply the limit
         });
 
         return res.status(200).json({

@@ -46,7 +46,7 @@ router.post("/auth/verify-otp", user.verifyOtp);
 router.post("/auth/send-reset-password", user.sendResetPassword);
 router.post("/auth/reset-password", user.resetPassword);
 router.post(
-  "/update-profile",
+  "/auth/update-profile",
   middlewares.auth,
   multer.single("media"),
   user.update
@@ -55,6 +55,7 @@ router.post(
 //home
 router.post("/flight_schedulles_detail", flight_schedulle.getSearch);
 router.get("/airports/search/:citystate", airport.getSearchStateCountry);
+router.get("/airports", airport.index);
 
 //checkout process
 router.post("/checkout-user", middlewares.auth, order.checkout);
@@ -72,7 +73,6 @@ router.post("/airlines", airline.store);
 router.put("/airlines/:airline_id", airline.update);
 router.delete("/airlines/:airline_id", airline.destroy);
 
-router.get("/airports", airport.index);
 router.get("/airports/:airport_id", airport.show);
 router.post("/airports", airport.store);
 router.put("/airports/:airport_id", airport.update);
