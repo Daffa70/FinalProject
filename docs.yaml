@@ -1255,7 +1255,7 @@ components:
     jwt_token:
       type: apiKey
       in: header
-      name: token
+      name: Authorization
   schemas:
     Passenger:
       type: object
