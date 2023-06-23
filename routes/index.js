@@ -66,7 +66,7 @@ router.get("/orders-user", middlewares.auth, order.showUser);
 
 ////
 
-// router.get("/seeder-flight", seeder.store);
+router.get("/seeder-flight", seeder.store);
 router.get("/airlines", airline.index);
 router.get("/airlines/:airline_id", airline.show);
 router.post("/airlines", airline.store);
