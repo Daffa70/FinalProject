@@ -19,23 +19,23 @@ module.exports = {
     const flightRecords = [];
     let count_id_flight = 1;
 
-    for (const [key, value] of Object.entries(rawSchedules)) {
-      const airportDepart = await Airport.findOne({
-        where: {
-          code: value.departureAirport,
-        },
-      });
-      const airportArrival = await Airport.findOne({
-        where: {
-          code: value.arrivalAirport,
-        },
-      });
+    const dbAirport = await Airport.findAll();
+    const dbAirplane = await Airplane.findAll();
 
-      const airplane = await Airplane.findOne({
-        where: {
-          code: value.aircraftId,
-        },
-      });
+    const airports = {};
+    const airplanes = {};
+
+    dbAirport.forEach((airport) => {
+      airports[airport.code] = airport;
+    });
+    dbAirplane.forEach((airplane) => {
+      airplanes[airplane.code] = airplane;
+    });
+
+    for (const [key, value] of Object.entries(rawSchedules)) {
+      const airportDepart = airports[value.departureAirport];
+      const airportArrival = airports[value.arrivalAirport];
+      const airplane = airplanes[value.aircraftId];
 
       let seatAvailable = 30;
 

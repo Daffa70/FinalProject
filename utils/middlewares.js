@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET_KEY } = process.env;
+const { User } = require("../db/models");
 
 module.exports = {
   auth: async (req, res, next) => {
@@ -14,35 +15,23 @@ module.exports = {
         });
       }
 
-      try {
-        const data = await jwt.verify(authorization, JWT_SECRET_KEY);
+      const data = await jwt.verify(authorization, JWT_SECRET_KEY);
 
-        if (!data.email_verify_at) {
-          return res.status(401).json({
-            status: false,
-            message: "You're not verified!",
-            data: null,
-          });
-        }
+      const user = await User.findOne({
+        where: { id: data.id },
+      });
 
-        req.user = {
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          email_verify_at: data.email_verify_at,
-          phone: data.phone,
-          user_type: data.user_type,
-          avatar: data.avatar,
-        };
+      req.user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        email_verify_at: user.email_verify_at,
+        phone: user.phone,
+        user_type: user.user_type,
+        avatar: user.avatar,
+      };
 
-        next();
-      } catch (err) {
-        return res.status(401).json({
-          status: false,
-          message: "Invalid token!",
-          data: null,
-        });
-      }
+      next();
     } catch (err) {
       next(err);
     }
