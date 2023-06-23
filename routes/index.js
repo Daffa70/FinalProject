@@ -49,7 +49,7 @@ router.post(
   multer.single("media"),
   user.update
 );
-router.post("/refresh-token", refreshtoken.refreshToken);
+router.post("/auth/refresh-token", middlewares.auth, refreshtoken.refreshToken);
 
 //home
 router.post("/flight_schedulles_detail", flight_schedulle.getSearch);

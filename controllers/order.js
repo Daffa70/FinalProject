@@ -154,11 +154,12 @@ module.exports = {
         booking_code,
         total_price,
         schedulle.flight_number,
-        schedulle.price,
         passengerDetails.length,
         full_name + family_name,
         email
       );
+
+      console.log(url_midtrans);
 
       const currentDate = moment();
       const fifteenMinutesFromNow = moment(currentDate).add(15, "minutes");
@@ -285,6 +286,10 @@ module.exports = {
           {
             model: Flight_schedulle,
             as: "schedulle",
+          },
+          {
+            model: Flight_schedulle,
+            as: "schedulle_return",
           },
           {
             model: Passenger,

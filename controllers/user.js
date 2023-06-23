@@ -20,45 +20,48 @@ module.exports = {
       const { name, email, phone, password } = req.body;
 
       // check requirement fields
-      if(name == '' || email == '' || phone == '' || password == ''){
+      if (name == "" || email == "" || phone == "" || password == "") {
         let i = 0;
-        let errorName = '', errorEmail = '', errorPhone = '', errorPassword = '';
+        let errorName = "",
+          errorEmail = "",
+          errorPhone = "",
+          errorPassword = "";
         let errorMessage = [];
-        if (name == ''){
-          errorName = 'Name';
+        if (name == "") {
+          errorName = "Name";
           errorMessage[i] = errorName;
           i = i + 1;
         }
-        if (email == ''){
-          errorEmail = 'Email';
+        if (email == "") {
+          errorEmail = "Email";
           errorMessage[i] = errorEmail;
           i = i + 1;
         }
-        if (phone == ''){
-          errorPhone = 'Phone';
+        if (phone == "") {
+          errorPhone = "Phone";
           errorMessage[i] = errorPhone;
           i = i + 1;
         }
-        if (password == ''){
-          errorPassword = 'Password';
+        if (password == "") {
+          errorPassword = "Password";
           errorMessage[i] = errorPassword;
           i = i + 1;
         }
-        if(i == 1){
+        if (i == 1) {
           return res.status(400).json({
             status: false,
             message: `${errorMessage[0]} field should not be empty!`,
             data: null,
           });
         }
-        if(i == 2){
+        if (i == 2) {
           return res.status(400).json({
             status: false,
             message: `${errorMessage[0]} and ${errorMessage[1]} fields should not be empty!`,
             data: null,
           });
         }
-        if(i == 3){
+        if (i == 3) {
           return res.status(400).json({
             status: false,
             message: `${errorMessage[0]}, ${errorMessage[1]}, and ${errorMessage[2]} fields should not be empty!`,
@@ -91,12 +94,18 @@ module.exports = {
         user_type: "basic",
       });
 
+      const waitingPeriodMinutesExpires = 60; // Set the waiting period in minutes
+      const waitingPeriodMillisExpires =
+        waitingPeriodMinutesExpires * 60 * 1000; // Convert to milliseconds
+
       const otp_num = helper.generateOtpNumber();
+      const expirationTime = new Date(Date.now() + waitingPeriodMillisExpires); // Calculate the expiration time
 
       await OtpVerify.create({
         user_id: user.id,
         otp_num: otp_num,
         last_sent_at: Date.now(),
+        expires_at: expirationTime,
       });
 
       const html = await nodemailer.getHtml("otp-email.ejs", {
@@ -125,12 +134,12 @@ module.exports = {
     try {
       const { email, password } = req.body;
 
-      if(email == '' || password == ''){
+      if (email == "" || password == "") {
         return res.status(400).json({
           status: false,
           message: "email or password should not be empty!",
           data: null,
-        }); 
+        });
       }
 
       const user = await User.findOne({ where: { email } });
@@ -209,34 +218,44 @@ module.exports = {
     try {
       const { email, otp } = req.body;
       const user = await User.findOne({
-        where: {
-          email: email,
-        },
+        email: email,
       });
 
       if (!user) {
         return res.status(400).json({
           status: false,
-          message: "email not found",
+          message: "Email not found",
           data: null,
         });
       }
 
       const checkOtp = await OtpVerify.findOne({
-        where: {
-          user_id: user.id,
-        },
+        user_id: user.id,
       });
 
-      console.log(user.id);
-      console.log(checkOtp.user_id);
+      if (!checkOtp) {
+        return res.status(400).json({
+          status: false,
+          message: "OTP not found",
+          data: null,
+        });
+      }
 
-      // console.log(checkOtp.user_id);
-
-      if (checkOtp.otp_num != otp) {
+      if (checkOtp.otp_num !== otp) {
         return res.status(400).json({
           status: false,
           message: "Incorrect OTP. Please try again",
+          data: null,
+        });
+      }
+
+      const currentTime = new Date();
+      const otpExpiration = checkOtp.expires_at;
+
+      if (currentTime > otpExpiration) {
+        return res.status(400).json({
+          status: false,
+          message: "OTP has expired. Please request a new one",
           data: null,
         });
       }
@@ -248,21 +267,37 @@ module.exports = {
         { where: { id: user.id } }
       );
 
-      checkOtp.destroy();
+      await checkOtp.destroy();
 
       return res.status(200).json({
         status: true,
         message: "User is verified!",
         data: null,
       });
-    } catch (error) {}
+    } catch (error) {
+      // Handle errors appropriately
+      console.error(error);
+      return res.status(500).json({
+        status: false,
+        message: "Internal server error",
+        data: null,
+      });
+    }
   },
 
   resendOtp: async (req, res) => {
     const { email } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email } });
 
     if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "Email not found",
+        data: null,
+      });
+    }
+
+    if (!user.email_verify_at) {
       return res.status(400).json({
         status: false,
         message: "Email not found",
@@ -292,12 +327,17 @@ module.exports = {
       }
     }
 
+    const waitingPeriodMinutesExpires = 60; // Set the waiting period in minutes
+    const waitingPeriodMillisExpires = waitingPeriodMinutesExpires * 60 * 1000; // Convert to milliseconds
+
     const otp_num = helper.generateOtpNumber();
+    const expirationTime = new Date(Date.now() + waitingPeriodMillisExpires); // Calculate the expiration time
 
     await OtpVerify.update(
       {
         otp_num: otp_num,
-        last_sent_at: new Date(), // Update the last sent timestamp
+        last_sent_at: new Date(),
+        expires_at: expirationTime,
       },
       { where: { user_id: user.id } }
     );
@@ -324,7 +364,9 @@ module.exports = {
       const payload = {
         id: user.id,
       };
-      const token = await jwt.sign(payload, JWT_SECRET_KEY);
+      const token = await jwt.sign(payload, JWT_SECRET_KEY, {
+        expiresIn: "1h",
+      });
       const url = `${req.protocol}://${req.get(
         "host"
       )}/auth/reset-password?token=${token}`;
@@ -351,39 +393,44 @@ module.exports = {
       const { token } = req.query;
       if (!token) {
         return res.status(401).json({
-          message: "invalid token!",
+          message: "Invalid token!",
           token,
         });
       }
       if (new_password != confirm_new_password) {
         return res.status(401).json({
-          message: "confirm password does not match!",
+          message: "Confirm password does not match!",
           token,
         });
       }
 
-      const data = await jwt.verify(token, JWT_SECRET_KEY);
+      const decoded = await jwt.verify(token, JWT_SECRET_KEY);
 
-      const hashPassword = await bcryp.hash(new_password, 10);
+      const hashPassword = await bcrypt.hash(new_password, 10);
       const updated = await User.update(
         { password: hashPassword },
-        { where: { id: data.id } }
+        { where: { id: decoded.id } }
       );
-      if (updated[0] == 0) {
+      if (updated[0] === 0) {
         return res.status(401).json({
           status: false,
-          message: `reset password failed!`,
+          message: "Reset password failed!",
           data: null,
         });
       }
 
       return res.status(201).json({
         status: true,
-        message: `reset password success!`,
+        message: "Reset password success!",
         data: null,
       });
     } catch (err) {
-      throw err;
+      console.error(err);
+      return res.status(500).json({
+        status: false,
+        message: "Internal server error",
+        data: null,
+      });
     }
   },
 
