@@ -12,7 +12,6 @@ module.exports = {
     booking_code,
     total,
     flight_number,
-    price,
     totalPerson,
     name,
     email
@@ -25,7 +24,7 @@ module.exports = {
       },
       item_details: [
         {
-          price: price,
+          price: total,
           quantity: totalPerson,
           name: flight_number,
         },

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       models.Order.belongsTo(models.Flight_schedulle, {
-        foreignKey: "schedulle_id",
+        foreignKey: "schedulle_return_id",
         as: "schedulle_return",
       });
 
