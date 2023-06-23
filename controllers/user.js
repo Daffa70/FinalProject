@@ -171,12 +171,6 @@ module.exports = {
 
       const payload = {
         id: user.id,
-        name: user.name,
-        email: user.email,
-        email_verify_at: user.email_verify_at,
-        phone: user.phone,
-        user_type: user.user_type,
-        avatar: user.avatar,
       };
 
       const token = await jwt.sign(payload, JWT_SECRET_KEY, {
@@ -456,12 +450,6 @@ module.exports = {
 
     const payload = {
       id: user.id,
-      name: user.name,
-      email: user.email,
-      email_verify_at: user.email_verify_at,
-      phone: user.phone,
-      user_type: user.user_type,
-      avatar: user.avatar,
     };
 
     const token = await jwt.sign(payload, JWT_SECRET_KEY, {
