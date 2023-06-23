@@ -1,40 +1,88 @@
 "use strict";
 
 /** @type {import('sequelize-cli').Migration} */
+
+const {
+  Flight_schedulle,
+  Airline,
+  Airport,
+  Airplane,
+  SeatClass,
+  Seat,
+} = require("../models");
+const moment = require("moment");
+const rawSchedules = require("./data/schedules.json");
+const seatRecords = [];
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     const flightRecords = [];
-    const numFlights = 10;
-    for (let i = 0; i < numFlights; i++) {
-      const departureTime = getRandomDateTime(new Date(), 7);
-      const flightDurationHours = getRandomNumber(1, 8);
-      const arrivalTime = new Date(
-        departureTime.getTime() + flightDurationHours * 60 * 60 * 1000
-      );
+    let count_id_flight = 1;
 
-      const flightData = {
-        airplane_id: getRandomNumber(1, 19),
-        departure_time: departureTime,
-        departure_date: departureTime,
-        arrival_time: arrivalTime,
-        arrival_date: arrivalTime,
-        departure_airport_id: getRandomNumber(1, 49),
-        arrival_airport_id: getRandomNumber(1, 49),
-        flight_number: generateFlightNumber(),
-        free_baggage: getRandomNumber(10, 30),
-        cabin_baggage: getRandomNumber(5, 15),
-        price: getRandomNumber(500000, 2000000),
-        class_id: getRandomNumber(1, 3),
-        departure_terminal_name: generateTerminalName(),
-        arrival_terminal_name: generateTerminalName(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+    for (const [key, value] of Object.entries(rawSchedules)) {
+      const airportDepart = await Airport.findOne({
+        where: {
+          code: value.departureAirport,
+        },
+      });
+      const airportArrival = await Airport.findOne({
+        where: {
+          code: value.arrivalAirport,
+        },
+      });
 
-      flightRecords.push(flightData);
+      const airplane = await Airplane.findOne({
+        where: {
+          code: value.aircraftId,
+        },
+      });
+
+      let seatAvailable = 30;
+
+      if (airplane.total_seat != null) {
+        seatAvailable = airplane.total_seat;
+      }
+
+      if (value.class == "ECONOMY") {
+        const scheduleDates = getScheduleDates(value);
+        for (const date of scheduleDates) {
+          const departureTime = moment(date).format("YYYY-MM-DD");
+          const arrivalTime = moment(date).format("YYYY-MM-DD");
+
+          flightRecords.push({
+            airplane_id: airplane.id,
+            departure_date: departureTime,
+            arrival_date: arrivalTime,
+            departure_time: value.departureTime,
+            arrival_time: value.arrivalTime,
+            departure_airport_id: airportDepart.id,
+            arrival_airport_id: airportArrival.id,
+            flight_number: value.flightNumber,
+            free_baggage: value.freeBaggage,
+            cabin_baggage: value.cabinBaggage,
+            price: value.price,
+            class_id: 1,
+            duration: value.durationMinute,
+            departure_terminal_name: value.departureTerminalName,
+            arrival_terminal_name: value.arrivalTerminalName,
+            seat_available: seatAvailable,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+
+          await generateSeats(
+            count_id_flight,
+            airplane.seat_layout,
+            airplane.total_seat
+          );
+
+          count_id_flight = count_id_flight + 1;
+        }
+      }
     }
 
     await queryInterface.bulkInsert("Flight_schedulles", flightRecords, {});
+    await queryInterface.bulkInsert("Seats", seatRecords, {});
   },
 
   async down(queryInterface, Sequelize) {
@@ -42,33 +90,82 @@ module.exports = {
   },
 };
 
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function getScheduleDates(schedule) {
+  const today = moment().startOf("day");
+  const currentDay = today.day(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+
+  const scheduleDates = [];
+  for (let i = currentDay; i <= 6; i++) {
+    const isScheduledDay = schedule[`is${moment.weekdays(true)[i]}`];
+    if (isScheduledDay) {
+      const date = today.clone().add(i - currentDay, "days");
+      scheduleDates.push(date);
+    }
+  }
+
+  const remainingWeeks = Math.ceil(
+    moment().endOf("month").diff(today, "days") / 7
+  );
+  for (let week = 1; week <= remainingWeeks; week++) {
+    for (let i = 0; i <= 6; i++) {
+      const isScheduledDay = schedule[`is${moment.weekdays(true)[i]}`];
+      if (isScheduledDay) {
+        const date = today.clone().add(week, "weeks").day(i);
+        if (date.isBefore(moment().endOf("month"))) {
+          scheduleDates.push(date);
+        }
+      }
+    }
+  }
+
+  return scheduleDates;
 }
 
-// Helper function to generate a random date and time within a range
-function getRandomDateTime(startDate, maxDays) {
-  const minTimestamp = startDate.getTime();
-  const maxTimestamp = startDate.getTime() + maxDays * 24 * 60 * 60 * 1000;
-  const randomTimestamp = getRandomNumber(minTimestamp, maxTimestamp);
-  return new Date(randomTimestamp);
-}
+function generateSeats(schedule_id, seat_layout, total_seat) {
+  const seats = [];
 
-// Helper function to generate a random flight number
-function generateFlightNumber() {
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const randomLetters =
-    letters.charAt(getRandomNumber(0, letters.length - 1)) +
-    letters.charAt(getRandomNumber(0, letters.length - 1)) +
-    letters.charAt(getRandomNumber(0, letters.length - 1));
+  let seatLayout;
+  if (seat_layout != null) {
+    seatLayout = seat_layout;
+  } else {
+    seatLayout = "3-3";
+  }
 
-  const randomDigits = getRandomNumber(100, 999);
+  const [leftSeats, rightSeats] = seatLayout.split("-").map(Number);
 
-  return randomLetters + randomDigits;
-}
+  let totalSeats = 30;
+  if (total_seat) {
+    totalSeats = total_seat;
+  }
 
-// Helper function to generate a random terminal name
-function generateTerminalName() {
-  const terminals = ["Terminal A", "Terminal B", "Terminal C", "Terminal D"];
-  return terminals[getRandomNumber(0, terminals.length - 1)];
+  const rowCount = Math.ceil(totalSeats / (leftSeats + rightSeats));
+
+  const rows = Array.from({ length: rowCount }, (_, i) =>
+    String.fromCharCode(65 + i)
+  );
+  const columns = Array.from(
+    { length: leftSeats + rightSeats },
+    (_, i) => i + 1
+  );
+
+  let seatCounter = 1;
+  for (let row of rows) {
+    for (let column of columns) {
+      if (seatCounter > totalSeats) {
+        break;
+      }
+
+      const seat = `${row}${column}`;
+
+      seatRecords.push({
+        schedulle_id: schedule_id,
+        seat_no: seat,
+        status: "available",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      seatCounter++;
+    }
+  }
 }
