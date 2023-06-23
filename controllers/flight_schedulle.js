@@ -14,7 +14,13 @@ module.exports = {
   index: async (req, res, next) => {
     try {
       const flight_schedulle = await Flight_schedulle.findAll({
-        include: ["airplane", "departure_airport", "arrival_airport", "class"],
+        include: [
+          "airplane",
+          "departure_airport",
+          "arrival_airport",
+          "class",
+          "seats",
+        ],
       });
 
       return res.status(200).json({
@@ -275,7 +281,7 @@ module.exports = {
       } = req.body;
 
       // page validation
-      if(page == ''){
+      if (page == "") {
         return res.status(404).json({
           status: false,
           message: "Page field should not be empty!",
@@ -284,57 +290,67 @@ module.exports = {
       }
 
       // search validation
-      if(dep_airport == '' || arr_airport == '' || departure_time == '' || seatclass == '' || person == ''){
+      if (
+        dep_airport == "" ||
+        arr_airport == "" ||
+        departure_time == "" ||
+        seatclass == "" ||
+        person == ""
+      ) {
         let i = 0;
-        let dep_airportError = '', arr_airportError = '', departure_timeError = '', seatclassError = '', personError = '';
+        let dep_airportError = "",
+          arr_airportError = "",
+          departure_timeError = "",
+          seatclassError = "",
+          personError = "";
         let errorMessage = [];
-        if (dep_airport == ''){
-          dep_airportError = 'Departure Airport';
+        if (dep_airport == "") {
+          dep_airportError = "Departure Airport";
           errorMessage[i] = dep_airportError;
           i = i + 1;
         }
-        if (arr_airport == ''){
-          arr_airportError = 'Arrival Airport';
+        if (arr_airport == "") {
+          arr_airportError = "Arrival Airport";
           errorMessage[i] = arr_airportError;
           i = i + 1;
         }
-        if (departure_time == ''){
-          departure_timeError = 'Departure Time';
+        if (departure_time == "") {
+          departure_timeError = "Departure Time";
           errorMessage[i] = departure_timeError;
           i = i + 1;
         }
-        if (seatclass == ''){
-          seatclassError = 'Seat Class';
+        if (seatclass == "") {
+          seatclassError = "Seat Class";
           errorMessage[i] = seatclassError;
           i = i + 1;
         }
-        if (person == ''){
-          personError = 'Person';
+        if (person == "") {
+          personError = "Person";
           errorMessage[i] = personError;
           i = i + 1;
         }
-        if(i == 1){
+        if (i == 1) {
           return res.status(400).json({
             status: false,
             message: `${errorMessage[0]} field should not be empty!`,
             data: null,
           });
         }
-        if(i == 2){
+        if (i == 2) {
           return res.status(400).json({
             status: false,
             message: `${errorMessage[0]} and ${errorMessage[1]} fields should not be empty!`,
             data: null,
           });
         }
-        if(i == 3){
+        if (i == 3) {
           return res.status(400).json({
             status: false,
             message: `${errorMessage[0]}, ${errorMessage[1]}, and ${errorMessage[2]} fields should not be empty!`,
             data: null,
           });
         }
-        if(i == 4){
+        if (i == 4) {
           return res.status(400).json({
             status: false,
             message: `${errorMessage[0]}, ${errorMessage[1]}, ${errorMessage[2]}, and ${errorMessage[3]} fields should not be empty!`,
@@ -431,7 +447,7 @@ module.exports = {
         offset,
         limit,
       });
-      
+
       if (!flight_schedulle || flight_schedulle.length === 0) {
         return res.status(404).json({
           status: false,
