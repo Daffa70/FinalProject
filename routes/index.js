@@ -55,6 +55,7 @@ router.post("/auth/refresh-token", middlewares.auth, refreshtoken.refreshToken);
 router.post("/flight_schedulles_detail", flight_schedulle.getSearch);
 router.get("/airports/search/:citystate", airport.getSearchStateCountry);
 router.get("/airports", airport.index);
+router.get("/seat_class", seat_class.index);
 
 //checkout process
 router.post("/checkout-user", middlewares.auth, order.checkout);

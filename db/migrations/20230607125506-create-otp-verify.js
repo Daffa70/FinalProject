@@ -18,6 +18,9 @@ module.exports = {
       last_sent_at: {
         type: Sequelize.DATE,
       },
+      expires_at: {
+        type: Sequelize.DATE,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
