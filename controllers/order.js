@@ -1,10 +1,4 @@
-const {
-  Order,
-  Passenger,
-  Seat,
-  Payment,
-  Flight_schedulle,
-} = require("../db/models");
+const { Order, Passenger, Seat, Flight_schedulle } = require("../db/models");
 const helper = require("../utils/helper");
 const moment = require("moment-timezone");
 const notification = require("./notification");
@@ -317,36 +311,6 @@ module.exports = {
     } catch (error) {
       throw error;
     }
-  },
-  notifyMidtrans: async (req, res) => {
-    const transactionStatus = req.body;
-    let status;
-
-    console.log(transactionStatus);
-    if (transactionStatus.transaction_status === "settlement") {
-      status = "ISSUED";
-      notification.sendNotification(
-        user_id,
-        "Pembayaran Anda Sudah Masuk",
-        "Pesanan Anda Sudah Kami Terima"
-      );
-    } else {
-      status = transactionStatus.transaction_status.toUpperCase();
-      notification.sendNotification(
-        user_id,
-        `Pembayaran Anda ${status}`,
-        `Pembayaran Anda ${status}`
-      );
-    }
-
-    const order = Order.update(
-      { payment_status: status },
-      {
-        where: { booking_code: transactionStatus.order_id },
-      }
-    );
-
-    res.status(200).send("success");
   },
 };
 

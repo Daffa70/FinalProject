@@ -3,19 +3,17 @@ const router = express.Router();
 const user = require("../controllers/user");
 const passenger = require("../controllers/passenger");
 const order = require("../controllers/order");
-const payment = require("../controllers/payment");
-const payment_method = require("../controllers/payment_method");
 const middlewares = require("../utils/middlewares");
 const airline = require("../controllers/airline");
 const airport = require("../controllers/airport");
 const flight_schedulle = require("../controllers/flight_schedulle");
-const flight_price = require("../controllers/flight_price");
 const seat_class = require("../controllers/seat_class");
 const notification = require("../controllers/notification");
 const media = require("../controllers/media");
 const multer = require("multer")();
 const seeder = require("../controllers/seeder");
 const refreshtoken = require("../controllers/refreshtoken");
+const midtrans = require("../controllers/midtrans");
 
 router.get("/", (req, res) => {
   return res.status(200).json({
@@ -34,7 +32,6 @@ router.get("/error", (req, res) => {
   return res.status(500).json(data);
 });
 
-router.post("/notification-midtrans", order.notifyMidtrans);
 //important!, using for front end
 router.post("/auth/register", user.register);
 router.post("/auth/login", user.login);
@@ -60,6 +57,7 @@ router.get("/seat_class", seat_class.index);
 //checkout process
 router.post("/checkout-user", middlewares.auth, order.checkout);
 router.get("/schedulles-detail", flight_schedulle.show);
+router.post("/notification-midtrans", midtrans.notifyMidtrans);
 
 //user
 router.get("/notification-user", middlewares.auth, notification.getNotify);
@@ -67,7 +65,7 @@ router.get("/orders-user", middlewares.auth, order.showUser);
 
 ////
 
-router.get("/seeder-flight", seeder.store);
+// router.get("/seeder-flight", seeder.store);
 router.get("/airlines", airline.index);
 router.get("/airlines/:airline_id", airline.show);
 router.post("/airlines", airline.store);
@@ -87,26 +85,12 @@ router.delete(
   flight_schedulle.destroy
 );
 
-router.get("/flight_prices", flight_price.index);
-router.get("/flight_prices/:flight_price_id", flight_price.show);
-router.post("/flight_prices", flight_price.store);
-router.put("/flight_prices/:flight_price_id", flight_price.update);
-router.delete("/flight_prices/:flight_price_id", flight_price.destroy);
-
 router.get("/seat_classs", seat_class.index);
 router.get("/seat_classs/:seatclass_id", seat_class.show);
 router.post("/seat_classs", seat_class.store);
 router.put("/seat_classs/:seatclass_id", seat_class.update);
 router.delete("/seat_classs/:seatclass_id", seat_class.destroy);
 
-router.post("/auth/register", user.register);
-router.post("/auth/login", user.login);
-router.get("/auth/whoami", middlewares.auth, user.whoami);
-router.get("/auth/oauth", user.googleOauth2);
-router.post("/auth/resend-otp", user.resendOtp);
-router.post("/auth/verify-otp", user.verifyOtp);
-router.post("/auth/send-reset-password", user.sendResetPassword);
-router.post("/auth/reset-password", user.resetPassword);
 // Passenger
 router.post("/passengers", passenger.store);
 router.get("/passengers", passenger.showAll);
@@ -121,18 +105,24 @@ router.get("/orders/:order_id", order.showIndex);
 router.put("/orders/:order_id", order.update);
 router.delete("/orders/:order_id", order.destroy);
 
-// Payment
-router.post("/payments", payment.store);
-router.get("/payments", payment.showAll);
-router.get("/payments/:payment_id", payment.showIndex);
-router.put("/payments/:payment_id", payment.update);
-router.delete("/payments/:payment_id", payment.destroy);
+// router.get("/flight_prices", flight_price.index);
+// router.get("/flight_prices/:flight_price_id", flight_price.show);
+// router.post("/flight_prices", flight_price.store);
+// router.put("/flight_prices/:flight_price_id", flight_price.update);
+// router.delete("/flight_prices/:flight_price_id", flight_price.destroy);
 
-// Payment Method
-router.post("/payment_methods", payment_method.store);
-router.get("/payment_methods", payment_method.showAll);
-router.get("/payment_methods/:payment_method_id", payment_method.showIndex);
-router.put("/payment_methods/:payment_method_id", payment_method.update);
-router.delete("/payment_methods/:payment_method_id", payment_method.destroy);
+// // Payment
+// router.post("/payments", payment.store);
+// router.get("/payments", payment.showAll);
+// router.get("/payments/:payment_id", payment.showIndex);
+// router.put("/payments/:payment_id", payment.update);
+// router.delete("/payments/:payment_id", payment.destroy);
+
+// // Payment Method
+// router.post("/payment_methods", payment_method.store);
+// router.get("/payment_methods", payment_method.showAll);
+// router.get("/payment_methods/:payment_method_id", payment_method.showIndex);
+// router.put("/payment_methods/:payment_method_id", payment_method.update);
+// router.delete("/payment_methods/:payment_method_id", payment_method.destroy);
 
 module.exports = router;
