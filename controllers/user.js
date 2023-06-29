@@ -281,7 +281,8 @@ module.exports = {
 
   resendOtp: async (req, res) => {
     const { email } = req.body;
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email: email } });
+    console.log(email);
 
     if (!user) {
       return res.status(404).json({
@@ -291,10 +292,10 @@ module.exports = {
       });
     }
 
-    if (!user.email_verify_at) {
+    if (user.email_verify_at) {
       return res.status(400).json({
         status: false,
-        message: "Email not found",
+        message: "Email is verified",
         data: null,
       });
     }
