@@ -17,8 +17,8 @@ const truncate = require("../../utils/truncate");
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await truncate.schedulle();
-    await truncate.seat();
+    // await truncate.schedulle();
+    // await truncate.seat();
 
     const getLastId = await Flight_schedulle.findOne({
       order: [["id", "DESC"]],
@@ -74,7 +74,7 @@ module.exports = {
             free_baggage: value.freeBaggage,
             cabin_baggage: value.cabinBaggage,
             price: value.price,
-            class_id: 1,
+            class_id: 4,
             duration: value.durationMinute,
             departure_terminal_name: value.departureTerminalName,
             arrival_terminal_name: value.arrivalTerminalName,
@@ -108,34 +108,16 @@ function getScheduleDates(schedule) {
   const currentDay = today.day(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
 
   const scheduleDates = [];
-  for (let i = currentDay; i <= 6; i++) {
-    const isScheduledDay = schedule[`is${moment.weekdays(true)[i]}`];
-    if (isScheduledDay) {
-      const date = today.clone().add(i - currentDay, "days");
-      scheduleDates.push(date);
-    }
-  }
 
-  const currentMonthEnd = moment().endOf("month");
   const nextMonthStart = moment()
-    .add(1, "month")
+    .add(4, "month")
     .startOf("month")
-    .add(0, "week");
-  // for the start of the second week
-  const remainingDaysCurrentMonth = currentMonthEnd.diff(today, "days") + 1;
-
-  for (let day = 1; day <= remainingDaysCurrentMonth; day++) {
-    const isScheduledDay =
-      schedule[`is${moment.weekdays(true)[(currentDay + day - 1) % 7]}`];
-    if (isScheduledDay) {
-      const date = today.clone().add(day - 1, "days");
-      scheduleDates.push(date);
-    }
-  }
+    .add(3, "week");
 
   const remainingWeeksNextMonth = Math.ceil(
     nextMonthStart.diff(moment().startOf("month"), "weeks")
   );
+
   for (let week = 1; week <= remainingWeeksNextMonth; week++) {
     for (let i = 0; i <= 6; i++) {
       const isScheduledDay = schedule[`is${moment.weekdays(true)[i]}`];

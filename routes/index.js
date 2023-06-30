@@ -76,6 +76,7 @@ router.get("/airports/:airport_id", airport.show);
 router.post("/airports", airport.store);
 router.put("/airports/:airport_id", airport.update);
 router.delete("/airports/:airport_id", airport.destroy);
+router.get("/airport/most-visited", airport.mostVisited);
 
 router.get("/flight_schedulles", flight_schedulle.index);
 router.post("/flight_schedulles", flight_schedulle.store);

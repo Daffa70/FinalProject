@@ -1,5 +1,6 @@
-const { Airport } = require("../db/models");
-const { Sequelize } = require("sequelize");
+const { Airport, Flight_schedulle } = require("../db/models");
+const { Sequelize, Op } = require("sequelize");
+const moment = require("moment");
 
 module.exports = {
   index: async (req, res, next) => {
@@ -133,6 +134,82 @@ module.exports = {
         return res.status(401).json({
           status: false,
           message: `Can't find airport for city/state: ${citystate}`,
+          data: null,
+        });
+      }
+
+      return res.status(200).json({
+        status: true,
+        message: "Success",
+        data: airport,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+  mostVisited: async (req, res, next) => {
+    try {
+      const { continent } = req.query;
+      const departureDate = moment().format("YYYY-MM-DD");
+
+      let airport;
+
+      if (!continent || continent == "Semua") {
+        airport = await Airport.findAll({
+          include: [
+            {
+              where: { departure_date: { [Op.eq]: departureDate } }, // Filter by departure date
+              model: Flight_schedulle,
+              as: "arrival_airport",
+              attributes: [],
+              order: [["price", "ASC"]],
+              limit: 1,
+              include: [
+                {
+                  model: Airport,
+                  as: "departure_airport",
+                },
+                {
+                  model: Airport,
+                  as: "arrival_airport",
+                },
+              ],
+            },
+          ],
+          order: [["total_visit", "DESC"]],
+          limit: 5,
+        });
+      } else {
+        airport = await Airport.findAll({
+          include: [
+            {
+              where: { departure_date: { [Op.eq]: departureDate } }, // Filter by departure date
+              model: Flight_schedulle,
+              as: "arrival_airport",
+              order: [["price", "ASC"]],
+              limit: 1,
+              include: [
+                {
+                  model: Airport,
+                  as: "departure_airport",
+                },
+                {
+                  model: Airport,
+                  as: "arrival_airport",
+                },
+              ],
+            },
+          ],
+          where: { continent: continent },
+          order: [["total_visit", "DESC"]],
+          limit: 5,
+        });
+      }
+
+      if (!airport || airport.length === 0) {
+        return res.status(401).json({
+          status: false,
+          message: `can't find airport`,
           data: null,
         });
       }

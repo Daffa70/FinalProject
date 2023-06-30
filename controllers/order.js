@@ -1,4 +1,10 @@
-const { Order, Passenger, Seat, Flight_schedulle } = require("../db/models");
+const {
+  Order,
+  Passenger,
+  Seat,
+  Flight_schedulle,
+  Airport,
+} = require("../db/models");
 const helper = require("../utils/helper");
 const moment = require("moment-timezone");
 const notification = require("./notification");
@@ -198,7 +204,15 @@ module.exports = {
           where: { id: scheduleid },
         });
 
+        await Airport.increment("total_visit", {
+          where: { id: schedulle.arrival_airport_id },
+        });
+
         if (schedulereturnid) {
+          const schedullereturn = await Flight_schedulle.findOne({
+            where: { id: schedulereturnid },
+          });
+
           await Seat.update(
             { status: "unavaiable" },
             { where: { id: passenger.seat_return_id } }
@@ -206,6 +220,10 @@ module.exports = {
 
           await Flight_schedulle.decrement("seat_available", {
             where: { id: schedulereturnid },
+          });
+
+          await Airport.increment("total_visit", {
+            where: { id: schedullereturn.arrival_airport_id },
           });
         }
       }
