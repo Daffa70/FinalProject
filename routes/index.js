@@ -47,6 +47,7 @@ router.post(
   user.update
 );
 router.post("/auth/refresh-token", middlewares.auth, refreshtoken.refreshToken);
+router.get("/auth/oauth", user.googleOauth2);
 
 //home
 router.post("/flight_schedulles_detail", flight_schedulle.getSearch);

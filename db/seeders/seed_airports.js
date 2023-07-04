@@ -2,10 +2,12 @@
 
 const schedules = require("./data/airports.json");
 const airportcontinet = require("./data/airports_continent.json");
+const truncate = require("../../utils/truncate");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
+    await truncate.seat();
     const airports = [];
     for (const [key, value] of Object.entries(schedules)) {
       let continent = airportcontinet.filter(

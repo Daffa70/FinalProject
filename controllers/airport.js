@@ -160,8 +160,7 @@ module.exports = {
             {
               where: { departure_date: { [Op.eq]: departureDate } }, // Filter by departure date
               model: Flight_schedulle,
-              as: "arrival_airport",
-              attributes: [],
+              as: "flight_schedulle",
               order: [["price", "ASC"]],
               limit: 1,
               include: [

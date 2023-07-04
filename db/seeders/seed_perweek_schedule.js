@@ -17,8 +17,8 @@ const truncate = require("../../utils/truncate");
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // await truncate.schedulle();
-    // await truncate.seat();
+    await truncate.schedulle();
+    await truncate.seat();
 
     const getLastId = await Flight_schedulle.findOne({
       order: [["id", "DESC"]],
@@ -74,7 +74,7 @@ module.exports = {
             free_baggage: value.freeBaggage,
             cabin_baggage: value.cabinBaggage,
             price: value.price,
-            class_id: 4,
+            class_id: 1,
             duration: value.durationMinute,
             departure_terminal_name: value.departureTerminalName,
             arrival_terminal_name: value.arrivalTerminalName,
@@ -109,10 +109,12 @@ function getScheduleDates(schedule) {
 
   const scheduleDates = [];
 
+  const currentWeek = moment().week(); // Get the current week
+
   const nextMonthStart = moment()
-    .add(4, "month")
+    .add(0, "month")
     .startOf("month")
-    .add(3, "week");
+    .add(0, "week");
 
   const remainingWeeksNextMonth = Math.ceil(
     nextMonthStart.diff(moment().startOf("month"), "weeks")

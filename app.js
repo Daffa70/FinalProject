@@ -38,6 +38,14 @@ app.use(
   })
 );
 app.use(morgan("dev"));
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 const file = fs.readFileSync("./docs.yaml", "utf-8");
 const swaggerDocument = YAML.parse(file);
@@ -48,7 +56,11 @@ app.use(router);
 //sentry error handler
 app.use(Sentry.Handlers.errorHandler());
 
-// 500
+app.get("/debug-sentry", function mainHandler(req, res) {
+  throw new Error("My first Sentry error!");
+});
+
+// 500;
 // app.use((err, req, res, next) => {
 //   console.log(err);
 //   return res.status(500).json({
