@@ -3,8 +3,9 @@ Content-Type: application/json
 
 {
     "name":"sabrina",
-    "email":"sabrina@mail.com",
-    "password":"password123"
+    "email":"airtixproject@gmail.com",
+    "phone" : "018921312312",
+    "password":"password"
 }
 
 ### 
@@ -17,5 +18,37 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:3000/flight_schedulles
+Content-Type: application/json
+
+{
+    "airplane_id" : 5,
+    "departure_time" : "2023-06-12T12:32:14.000Z",
+    "arrival_time" : "2023-06-12T15:32:14.000Z",
+    "departure_airport_id" : 1,
+    "arrival_airport_id" : 4,
+    "flight_number" : "ABCS",
+    "free_baggage" : 20,
+    "cabin_baggage" : 15,
+    "price" : 1000000,
+    "class_id" : 1,
+    "departure_terminal_name" : "Terminal 2B",
+    "arrival_terminal_name" : "Terminal Domestik"
+}
+
+###
 GET http://localhost:3000/whoami
-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6InNhYnJpbmFAbWFpbC5jb20iLCJpYXQiOjE2ODI2OTI2MDh9.VneW1WUp6Cupqe2H4zdYwwc18Ows-8OXnjd1nd1vTCY
+
+###
+POST http://127.0.0.1:3000/flight_schedulles_detail?sort=duration_asc&page=1
+Content-Type: application/json
+
+{
+    "dep_airport": "SUB",
+    "arr_airport": "DPS",
+    "departure_time": "2023-06-25",
+    "return_time": "",
+    "seatclass": "Economy",
+    "person": 2
+}
+

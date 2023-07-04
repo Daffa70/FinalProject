@@ -1,0 +1,994 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 2xv39eljqb2ys
+info:
+  title: Airtix
+  version: '1.0'
+  description: Dokumentasi api untuk Final Project tentang ticketing pesawat
+servers:
+  - url: 'http://127.0.0.1:3000'
+paths:
+  /auth/register:
+    post:
+      summary: Register User
+      operationId: post-auth-register
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: user created!
+                    data:
+                      id: 1
+                      name: sabrina
+                      email: daffaammar09@gmail.com
+                      phone: '018921312312'
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: user created!
+                    data:
+                      id: 1
+                      name: sabrina
+                      email: daffaammar09@gmail.com
+                      phone: '018921312312'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email already used!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email already used!
+                    data: null
+      description: Register user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                password:
+                  type: string
+              x-examples:
+                Example 1:
+                  name: sabrina
+                  email: daffaammar09@gmail.com
+                  phone: '018921312312'
+                  password: password
+            examples:
+              Example 1:
+                value:
+                  name: sabrina
+                  email: daffaammar09@gmail.com
+                  phone: '018921312312'
+                  password: password
+      x-internal: false
+    parameters: []
+  /auth/login:
+    post:
+      summary: Login User
+      operationId: post-auth-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: login success!
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6ImRhZmZhYW1tYXIwOUBnbWFpbC5jb20iLCJpYXQiOjE2ODY5Mjc4NDF9.a36I36P4p1A2C3IfGVlKFhqTHSMea2nmROCZJYwyxpg
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: login success!
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6ImRhZmZhYW1tYXIwOUBnbWFpbC5jb20iLCJpYXQiOjE2ODY5Mjc4NDF9.a36I36P4p1A2C3IfGVlKFhqTHSMea2nmROCZJYwyxpg
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+                Example 2:
+                  value:
+                    status: false
+                    message: 'your account is registered with google oauth, you need to login with google oauth!'
+                    data: null
+                Example 3:
+                  value:
+                    status: false
+                    message: password is not valid!
+                    data: null
+      description: Login user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+                  password: password
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: password
+              Example 2:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: ''
+              Example 3:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: passwordsalah
+  /auth/resend-otp:
+    parameters: []
+    post:
+      summary: Resend OTP
+      operationId: post-auth-resend-otp
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: OTP verification has been resent!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: OTP verification has been resent!
+                    data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: Please wait 60 minutes before resending the OTP.
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: Please wait 1 minutes before resending the OTP.
+                    data: null
+      description: Resend OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+  /auth/verify-otp:
+    post:
+      summary: Verify OTP
+      operationId: post-auth-verify-otp
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: User is verified!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: User is verified!
+                    data: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+                Example 2:
+                  value:
+                    status: false
+                    message: Incorrect OTP. Please try again
+                    data: null
+      description: Verify otp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                otp:
+                  type: integer
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+                  otp: 529642
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+                  otp: 529642
+  /auth/send-reset-password:
+    post:
+      summary: Send Reset Password
+      operationId: post-auth-send-reset-password
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password mail is send to your email!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: reset password mail is send to your email!
+                    data: null
+      description: Send reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffa.20042@mhs.unesa.ac.id
+            examples:
+              Example 1:
+                value:
+                  email: daffa.20042@mhs.unesa.ac.id
+  /auth/reset-password:
+    post:
+      summary: Reset Password
+      operationId: post-auth-reset-password
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password success!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: reset password success!
+                    data: null
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password failed!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+                  token:
+                    type: string
+                    x-stoplight:
+                      id: 0zi7bxn9msin8
+              examples:
+                Example 1:
+                  value:
+                    message: invalid token!
+                    token: token
+                Example 2:
+                  value:
+                    message: confirm password does not match!
+                    token: token
+                Example 3:
+                  value:
+                    status: false
+                    message: reset password failed!
+                    data: null
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+          description: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNjg2MzE4MTIyfQ.PJm9lTH48xSXPnx3IEJNcUJbp8IFtCBHfENgo7w_8e8
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+                confirm_new_password:
+                  type: string
+              x-examples:
+                Example 1:
+                  new_password: password123
+                  confirm_new_password: password123
+            examples:
+              Example 1:
+                value:
+                  new_password: password123
+                  confirm_new_password: password123
+      description: Reset password
+    parameters: []
+  /notification-user:
+    get:
+      summary: Notification user
+      tags: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: success
+                    data:
+                      id: 1
+                      user_id: 4
+                      title: Pesanan Anda Sudah Masuk
+                      description: Pesanan Anda Sudah Berhasil Kami Terima
+                      is_read: false
+                      createdAt: '2023-06-16T15:48:02.987Z'
+                      updatedAt: '2023-06-16T15:48:02.987Z'
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      user_id:
+                        type: integer
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      is_read:
+                        type: boolean
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: success
+                    data:
+                      id: 1
+                      user_id: 4
+                      title: Pesanan Anda Sudah Masuk
+                      description: Pesanan Anda Sudah Berhasil Kami Terima
+                      is_read: false
+                      createdAt: '2023-06-16T15:48:02.987Z'
+                      updatedAt: '2023-06-16T15:48:02.987Z'
+          headers: {}
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    x-stoplight:
+                      id: gbsqsvsw4irj7
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: yphv1xjfr40db
+                  data:
+                    type: string
+                    x-stoplight:
+                      id: yhuyqmeqkzkuh
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: There are no notifications for this user
+                    data: null
+      operationId: get-notification-user
+      description: Notification User
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization
+  /orders-user:
+    get:
+      summary: Order User
+      responses:
+        '200':
+          description: Success
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: success
+                    data:
+                      - id: 1
+                        user_id: 4
+                        full_name: Daffa
+                        family_name: Fauzan
+                        title: null
+                        email: daffaammar09@gmail.com
+                        phone: null
+                        schedulle_id: 1
+                        booking_code: 4REGZSS
+                        total_price: 1100638
+                        url_midtrans: null
+                        payment_status: UNPAID
+                        last_payment_date: '2023-06-16T16:03:01.570Z'
+                        createdAt: '2023-06-16T15:48:01.630Z'
+                        updatedAt: '2023-06-16T15:48:01.630Z'
+                        schedulle:
+                          id: 1
+                          airplane_id: 9
+                          departure_date: '2023-06-20'
+                          departure_time: '13:57:29.588'
+                          arrival_date: '2023-06-20'
+                          arrival_time: '20:57:29.588'
+                          departure_airport_id: 18
+                          arrival_airport_id: 5
+                          flight_number: PUQ791
+                          free_baggage: 13
+                          cabin_baggage: 8
+                          price: 1100638
+                          class_id: 1
+                          duration: null
+                          departure_terminal_name: Terminal D
+                          arrival_terminal_name: Terminal D
+                          seat_available: null
+                          createdAt: '2023-06-16T15:40:15.304Z'
+                          updatedAt: '2023-06-18T06:00:07.221Z'
+                        passengers:
+                          - id: 1
+                            order_id: 1
+                            booking_order: null
+                            full_name: Daffa
+                            family_name: Fauzan
+                            phone: null
+                            email: null
+                            title: Mr.
+                            date_birth: '2000-09-02T17:00:00.000Z'
+                            nationality: Indonesia
+                            identity_number: 912783123
+                            issuing_country: Indonesia
+                            identity_expired: null
+                            schedule_id: null
+                            seat_id: 15
+                            createdAt: '2023-06-16T15:48:01.905Z'
+                            updatedAt: '2023-06-16T15:48:01.905Z'
+                      - id: 2
+                        user_id: 4
+                        full_name: Daffa
+                        family_name: Fauzan
+                        title: null
+                        email: daffaammar09@gmail.com
+                        phone: null
+                        schedulle_id: 1
+                        booking_code: 4FE76IN
+                        total_price: 1100638
+                        url_midtrans: null
+                        payment_status: UNPAID
+                        last_payment_date: '2023-06-18T06:15:06.440Z'
+                        createdAt: '2023-06-18T06:00:06.449Z'
+                        updatedAt: '2023-06-18T06:00:06.449Z'
+                        schedulle:
+                          id: 1
+                          airplane_id: 9
+                          departure_date: '2023-06-20'
+                          departure_time: '13:57:29.588'
+                          arrival_date: '2023-06-20'
+                          arrival_time: '20:57:29.588'
+                          departure_airport_id: 18
+                          arrival_airport_id: 5
+                          flight_number: PUQ791
+                          free_baggage: 13
+                          cabin_baggage: 8
+                          price: 1100638
+                          class_id: 1
+                          duration: null
+                          departure_terminal_name: Terminal D
+                          arrival_terminal_name: Terminal D
+                          seat_available: null
+                          createdAt: '2023-06-16T15:40:15.304Z'
+                          updatedAt: '2023-06-18T06:00:07.221Z'
+                        passengers:
+                          - id: 2
+                            order_id: 2
+                            booking_order: null
+                            full_name: Daffa
+                            family_name: Fauzan
+                            phone: null
+                            email: null
+                            title: Mr.
+                            date_birth: '2000-09-02T17:00:00.000Z'
+                            nationality: Indonesia
+                            identity_number: 912783123
+                            issuing_country: Indonesia
+                            identity_expired: null
+                            schedule_id: null
+                            seat_id: 15
+                            createdAt: '2023-06-18T06:00:06.794Z'
+                            updatedAt: '2023-06-18T06:00:06.794Z'
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        user_id:
+                          type: integer
+                        full_name:
+                          type: string
+                        family_name:
+                          type: string
+                        title:
+                          type: string
+                          x-stoplight:
+                            id: 02810kd1dy1it
+                        email:
+                          type: string
+                        phone:
+                          type: string
+                          x-stoplight:
+                            id: ec5mk0yalwcal
+                        schedulle_id:
+                          type: integer
+                        booking_code:
+                          type: string
+                        total_price:
+                          type: integer
+                        url_midtrans:
+                          type: string
+                          x-stoplight:
+                            id: 74nyc7loc31er
+                        payment_status:
+                          type: string
+                        last_payment_date:
+                          type: string
+                        schedulle:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            airplane_id:
+                              type: integer
+                            departure_date:
+                              type: string
+                            departure_time:
+                              type: string
+                            arrival_date:
+                              type: string
+                            arrival_time:
+                              type: string
+                            departure_airport_id:
+                              type: integer
+                            arrival_airport_id:
+                              type: integer
+                            flight_number:
+                              type: string
+                            free_baggage:
+                              type: integer
+                            cabin_baggage:
+                              type: integer
+                            price:
+                              type: integer
+                            class_id:
+                              type: integer
+                            duration:
+                              type: string
+                              x-stoplight:
+                                id: bwjqxjgt10rz1
+                            departure_terminal_name:
+                              type: string
+                            arrival_terminal_name:
+                              type: string
+                            seat_available:
+                              type: string
+                              x-stoplight:
+                                id: kk3tqt0yugp2f
+                        passengers:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              id:
+                                type: integer
+                              order_id:
+                                type: integer
+                              booking_order:
+                                type: string
+                                x-stoplight:
+                                  id: fi6dedpf7izx8
+                              full_name:
+                                type: string
+                              family_name:
+                                type: string
+                              phone:
+                                type: string
+                                x-stoplight:
+                                  id: hqb39k3ij0vnu
+                              email:
+                                type: string
+                                x-stoplight:
+                                  id: agtd5oaa72etw
+                              title:
+                                type: string
+                              date_birth:
+                                type: string
+                              nationality:
+                                type: string
+                              identity_number:
+                                type: integer
+                              issuing_country:
+                                type: string
+                              identity_expired:
+                                type: string
+                                x-stoplight:
+                                  id: lnxzczmyshzyh
+                              schedule_id:
+                                type: integer
+                                x-stoplight:
+                                  id: do9e4t3s7vcwu
+                              seat_id:
+                                type: integer
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: success
+                    data:
+                      - id: 1
+                        user_id: 4
+                        full_name: Daffa
+                        family_name: Fauzan
+                        title: null
+                        email: daffaammar09@gmail.com
+                        phone: null
+                        schedulle_id: 1
+                        booking_code: 4REGZSS
+                        total_price: 1100638
+                        url_midtrans: null
+                        payment_status: UNPAID
+                        last_payment_date: '2023-06-16T16:03:01.570Z'
+                        createdAt: '2023-06-16T15:48:01.630Z'
+                        updatedAt: '2023-06-16T15:48:01.630Z'
+                        schedulle:
+                          id: 1
+                          airplane_id: 9
+                          departure_date: '2023-06-20'
+                          departure_time: '13:57:29.588'
+                          arrival_date: '2023-06-20'
+                          arrival_time: '20:57:29.588'
+                          departure_airport_id: 18
+                          arrival_airport_id: 5
+                          flight_number: PUQ791
+                          free_baggage: 13
+                          cabin_baggage: 8
+                          price: 1100638
+                          class_id: 1
+                          duration: null
+                          departure_terminal_name: Terminal D
+                          arrival_terminal_name: Terminal D
+                          seat_available: null
+                          createdAt: '2023-06-16T15:40:15.304Z'
+                          updatedAt: '2023-06-18T06:00:07.221Z'
+                        passengers:
+                          - id: 1
+                            order_id: 1
+                            booking_order: null
+                            full_name: Daffa
+                            family_name: Fauzan
+                            phone: null
+                            email: null
+                            title: Mr.
+                            date_birth: '2000-09-02T17:00:00.000Z'
+                            nationality: Indonesia
+                            identity_number: 912783123
+                            issuing_country: Indonesia
+                            identity_expired: null
+                            schedule_id: null
+                            seat_id: 15
+                            createdAt: '2023-06-16T15:48:01.905Z'
+                            updatedAt: '2023-06-16T15:48:01.905Z'
+                      - id: 2
+                        user_id: 4
+                        full_name: Daffa
+                        family_name: Fauzan
+                        title: null
+                        email: daffaammar09@gmail.com
+                        phone: null
+                        schedulle_id: 1
+                        booking_code: 4FE76IN
+                        total_price: 1100638
+                        url_midtrans: null
+                        payment_status: UNPAID
+                        last_payment_date: '2023-06-18T06:15:06.440Z'
+                        createdAt: '2023-06-18T06:00:06.449Z'
+                        updatedAt: '2023-06-18T06:00:06.449Z'
+                        schedulle:
+                          id: 1
+                          airplane_id: 9
+                          departure_date: '2023-06-20'
+                          departure_time: '13:57:29.588'
+                          arrival_date: '2023-06-20'
+                          arrival_time: '20:57:29.588'
+                          departure_airport_id: 18
+                          arrival_airport_id: 5
+                          flight_number: PUQ791
+                          free_baggage: 13
+                          cabin_baggage: 8
+                          price: 1100638
+                          class_id: 1
+                          duration: null
+                          departure_terminal_name: Terminal D
+                          arrival_terminal_name: Terminal D
+                          seat_available: null
+                          createdAt: '2023-06-16T15:40:15.304Z'
+                          updatedAt: '2023-06-18T06:00:07.221Z'
+                        passengers:
+                          - id: 2
+                            order_id: 2
+                            booking_order: null
+                            full_name: Daffa
+                            family_name: Fauzan
+                            phone: null
+                            email: null
+                            title: Mr.
+                            date_birth: '2000-09-02T17:00:00.000Z'
+                            nationality: Indonesia
+                            identity_number: 912783123
+                            issuing_country: Indonesia
+                            identity_expired: null
+                            schedule_id: null
+                            seat_id: 15
+                            createdAt: '2023-06-18T06:00:06.794Z'
+                            updatedAt: '2023-06-18T06:00:06.794Z'
+        '404':
+          description: Not Found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    x-stoplight:
+                      id: 0flgswchcvpy4
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: ff2ulxwdn5uqk
+                  data:
+                    type: string
+                    x-stoplight:
+                      id: ovrm0m82nae7n
+                    example: no type
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: can't find order
+                    data: null
+      operationId: get-orders-user
+      description: Order user
+      parameters:
+        - schema:
+            type: string
+          in: header
+          name: Authorization

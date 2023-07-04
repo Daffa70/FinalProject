@@ -16,6 +16,11 @@ module.exports = {
     password: DB_PASSWORD,
     dialect: DB_DIALECT,
     port: DB_PORT,
+    dialectOptions: {
+      dateStrings: true,
+      typeCast: true,
+    },
+    timezone: "+07:00",
   },
   test: {
     host: DB_HOST,
@@ -24,6 +29,11 @@ module.exports = {
     password: DB_PASSWORD,
     dialect: DB_DIALECT,
     port: DB_PORT,
+    dialectOptions: {
+      dateStrings: true,
+      typeCast: true,
+    },
+    timezone: "+07:00",
   },
   production: {
     host: DB_HOST,
@@ -32,5 +42,10 @@ module.exports = {
     password: DB_PASSWORD,
     dialect: DB_DIALECT,
     port: DB_PORT,
+    dialectOptions: {
+      dateStrings: true,
+      typeCast: true,
+    },
+    timezone: "+07:00",
   },
 };

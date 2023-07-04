@@ -1,0 +1,1414 @@
+openapi: 3.0.0
+info:
+  title: Airtix API Docs
+  description: |-
+    API for final project Airtix
+  contact:
+    email: airtixproject@gmail.com
+  version: 1.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/DAFFAAMMAR09/Airtix/1.0.0
+  - url: http://localhost:3000
+    description: Test local
+  - url: https://airtix-develop.up.railway.app
+    description: Develop
+tags:
+  - name: Auth
+    description: Auth
+  - name: Flight
+    description: Get Flight Data
+  - name: Checkout
+    description: Checkout
+  - name: User
+    description: User needed API
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Register User
+      operationId: post-auth-register
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      phone:
+                        type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: user created!
+                    data:
+                      id: 1
+                      name: sabrina
+                      email: daffaammar09@gmail.com
+                      phone: "018921312312"
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: user created!
+                    data:
+                      id: 1
+                      name: sabrina
+                      email: daffaammar09@gmail.com
+                      phone: "018921312312"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email already used!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email already used!
+                    data: null
+      description: Register user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                password:
+                  type: string
+              x-examples:
+                Example 1:
+                  name: sabrina
+                  email: daffaammar09@gmail.com
+                  phone: "018921312312"
+                  password: password
+            examples:
+              Example 1:
+                value:
+                  name: sabrina
+                  email: daffaammar09@gmail.com
+                  phone: "018921312312"
+                  password: password
+      x-internal: false
+    parameters: []
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Login User
+      operationId: post-auth-login
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: login success!
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6ImRhZmZhYW1tYXIwOUBnbWFpbC5jb20iLCJpYXQiOjE2ODY5Mjc4NDF9.a36I36P4p1A2C3IfGVlKFhqTHSMea2nmROCZJYwyxpg
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: login success!
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibmFtZSI6InNhYnJpbmEiLCJlbWFpbCI6ImRhZmZhYW1tYXIwOUBnbWFpbC5jb20iLCJpYXQiOjE2ODY5Mjc4NDF9.a36I36P4p1A2C3IfGVlKFhqTHSMea2nmROCZJYwyxpg
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+                Example 2:
+                  value:
+                    status: false
+                    message: "your account is registered with google oauth, you need to login with google oauth!"
+                    data: null
+                Example 3:
+                  value:
+                    status: false
+                    message: password is not valid!
+                    data: null
+      description: Login user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+                  password: password
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: password
+              Example 2:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: ""
+              Example 3:
+                value:
+                  email: daffaammar09@gmail.com
+                  password: passwordsalah
+  /auth/resend-otp:
+    parameters: []
+    post:
+      tags:
+        - Auth
+      summary: Resend OTP
+      operationId: post-auth-resend-otp
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: OTP verification has been resent!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: OTP verification has been resent!
+                    data: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+        "429":
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: Please wait 60 minutes before resending the OTP.
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: Please wait 1 minutes before resending the OTP.
+                    data: null
+      description: Resend OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+  /auth/verify-otp:
+    post:
+      tags:
+        - Auth
+      summary: Verify OTP
+      operationId: post-auth-verify-otp
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: User is verified!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: User is verified!
+                    data: null
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: email not found!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: email not found!
+                    data: null
+                Example 2:
+                  value:
+                    status: false
+                    message: Incorrect OTP. Please try again
+                    data: null
+      description: Verify otp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                otp:
+                  type: integer
+              x-examples:
+                Example 1:
+                  email: daffaammar09@gmail.com
+                  otp: 529642
+            examples:
+              Example 1:
+                value:
+                  email: daffaammar09@gmail.com
+                  otp: 529642
+  /auth/send-reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Send Reset Password
+      operationId: post-auth-send-reset-password
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password mail is send to your email!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: reset password mail is send to your email!
+                    data: null
+      description: Send reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              x-examples:
+                Example 1:
+                  email: daffa.20042@mhs.unesa.ac.id
+            examples:
+              Example 1:
+                value:
+                  email: daffa.20042@mhs.unesa.ac.id
+  /auth/reset-password:
+    post:
+      tags:
+        - Auth
+      summary: Reset Password
+      operationId: post-auth-reset-password
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password success!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: reset password success!
+                    data: null
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: reset password failed!
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+                  token:
+                    type: string
+                    x-stoplight:
+                      id: bayj8a4mn7g8t
+              examples:
+                Example 1:
+                  value:
+                    message: invalid token!
+                    token: token
+                Example 2:
+                  value:
+                    message: confirm password does not match!
+                    token: token
+                Example 3:
+                  value:
+                    status: false
+                    message: reset password failed!
+                    data: null
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+          description: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiaWF0IjoxNjg2MzE4MTIyfQ.PJm9lTH48xSXPnx3IEJNcUJbp8IFtCBHfENgo7w_8e8
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                new_password:
+                  type: string
+                confirm_new_password:
+                  type: string
+              x-examples:
+                Example 1:
+                  new_password: password123
+                  confirm_new_password: password123
+            examples:
+              Example 1:
+                value:
+                  new_password: password123
+                  confirm_new_password: password123
+      description: Reset password
+    parameters: []
+  /auth/whoami:
+    get:
+      summary: Get authenticated user information
+      description: Retrieves information about the currently authenticated user.
+      tags:
+        - Auth
+      security:
+        - jwt_token: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    description: Indicates the success status of the request.
+                  message:
+                    type: string
+                    description: A message describing the result of the request.
+                  data:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        description: The authenticated user object.
+                        # Add properties specific to the user object here
+  /auth/update-profile:
+    post:
+      summary: Update user profile
+      description: Endpoint to update the user's profile information.
+      tags:
+        - Auth
+      security:
+        - jwt_token: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: User's name
+                phone:
+                  type: string
+                  description: User's phone number
+                media:
+                  type: string
+                  format: binary
+                  description: User's profile picture
+      responses:
+        "201":
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    description: Request status
+                  message:
+                    type: string
+                    description: Success message
+                  data:
+                    type: string
+                    description: URL of the uploaded profile picture
+  /flight_schedulles_detail:
+    post:
+      summary: Flight Schedulle Search
+      operationId: post-flight_schedulles
+      tags:
+        - Flight
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      departure:
+                        type: string
+                      return:
+                        type: string
+                x-examples:
+                  Example 1:
+                    status: true
+                    message: Success
+                    data:
+                      departure: flight_schedulle
+                      return: flight_schedulle_return
+              examples:
+                Search Success:
+                  value:
+                    status: true
+                    message: Success
+                    data:
+                      departure: flight_schedulle
+                      return: flight_schedulle_return
+                Search Success 2:
+                  value:
+                    status: true
+                    message: Success
+                    data:
+                      departure: flight_schedulle
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                x-examples:
+                  Example 1:
+                    status: false
+                    message: depature airport is not found
+                    data: null
+                properties:
+                  status:
+                    type: boolean
+                  message:
+                    type: string
+                  data: {}
+              examples:
+                Flight Schedulle Doesn't Exist:
+                  value:
+                    status: false
+                    message: Can't find flight_schedule
+                    data: null
+      description: Search flight schedulles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dep_airport:
+                  type: string
+                arr_airport:
+                  type: string
+                departure_time:
+                  type: string
+                return_time:
+                  type: string
+                seatclass:
+                  type: string
+                person:
+                  type: integer
+            examples:
+              Example 1:
+                value:
+                  dep_airport: "CGK"
+                  arr_airport: "DPS"
+                  departure_time: "2023-06-25"
+                  return_time: "2023-06-19"
+                  seatclass: Economy
+                  person: 2
+
+      parameters:
+        - name: sorts
+          in: query
+          description: Sort Filter
+          required: true
+          schema:
+            type: string
+            enum:
+              - price_asc
+              - duration_asc
+              - arrival_asc
+              - arrival_desc
+              - departure_asc
+              - departure_asc
+        - name: page
+          in: query
+          description: Pagination
+          required: true
+          schema:
+            type: integer
+    parameters: []
+  /airports:
+    get:
+      summary: Get all airports
+      tags:
+        - Flight
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirportResponse"
+  /airports/search/{citystate}:
+    get:
+      summary: Search airports by city or state
+      tags:
+        - Flight
+      parameters:
+        - in: path
+          name: citystate
+          required: true
+          schema:
+            type: string
+          description: City or state to search for airports
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AirportSearchResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /checkout-user:
+    post:
+      summary: Checkout user
+      description: Checkout a user and create an order
+      tags:
+        - Checkout
+      security:
+        - jwt_token: []
+      parameters:
+        - in: query
+          name: scheduleid
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                full_name:
+                  type: string
+                family_name:
+                  type: string
+                email:
+                  type: string
+                passengers:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Passenger"
+              required:
+                - full_name
+                - family_name
+                - email
+                - passengers
+      responses:
+        "201":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /notification-user:
+    get:
+      summary: Notification user
+      tags:
+        - User
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    x-stoplight:
+                      id: 44tgb4yj33ho3
+                  user_id:
+                    type: integer
+                    x-stoplight:
+                      id: 1927g13bxqpi9
+                  title:
+                    type: string
+                    x-stoplight:
+                      id: wgmel6valp86h
+                  description:
+                    type: string
+                    x-stoplight:
+                      id: n427wdklp3oxk
+                  is_read:
+                    type: boolean
+                    x-stoplight:
+                      id: wmic327m33gpi
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: success
+                    data:
+                      id: 1
+                      user_id: 4
+                      title: Pesanan Anda Sudah Masuk
+                      description: Pesanan Anda Sudah Berhasil Kami Terima
+                      is_read: false
+                      createdAt: "2023-06-16T15:48:02.987Z"
+                      updatedAt: "2023-06-16T15:48:02.987Z"
+          headers: {}
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    x-stoplight:
+                      id: gbsqsvsw4irj7
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: yphv1xjfr40db
+                  data:
+                    type: string
+                    x-stoplight:
+                      id: yhuyqmeqkzkuh
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: There are no notifications for this user
+                    data: null
+      operationId: get-notification-user
+      description: Notification User
+      security:
+        - jwt_token: []
+  /orders-user:
+    get:
+      tags:
+        - User
+      summary: Order User
+      responses:
+        "200":
+          description: Success
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    x-stoplight:
+                      id: dzusb4eroegh8
+                  user_id:
+                    type: string
+                    x-stoplight:
+                      id: 5i85vv91v24rv
+                  full_name:
+                    type: string
+                    x-stoplight:
+                      id: zqakdldh2zox5
+                  family_name:
+                    type: string
+                    x-stoplight:
+                      id: 3b592wv2h4cua
+                  title:
+                    type: string
+                    x-stoplight:
+                      id: gfd3vzwh09ao5
+                  email:
+                    type: string
+                    x-stoplight:
+                      id: w2hvwwgusys5u
+                  phone:
+                    type: string
+                    x-stoplight:
+                      id: j5f228j4u9kt3
+                  schedulle_id:
+                    type: integer
+                    x-stoplight:
+                      id: ubo7stwaavuh7
+                  booking_code:
+                    type: string
+                    x-stoplight:
+                      id: aa1w8q3ob64b1
+                  total_price:
+                    type: string
+                    x-stoplight:
+                      id: his6e4x5ys6he
+                  url_midtrans:
+                    type: string
+                    x-stoplight:
+                      id: ae4eoyavapkyu
+                  payment_status:
+                    type: string
+                    x-stoplight:
+                      id: 2hzl3fq8qpj6r
+                  last_payment_date:
+                    type: string
+                    x-stoplight:
+                      id: d0ykvsfbz3yfk
+                  schedulle:
+                    type: object
+                    x-stoplight:
+                      id: fmm2tzkxbr6js
+                    properties:
+                      airplane_id:
+                        type: integer
+                        x-stoplight:
+                          id: 0uxvu6a55whnp
+                      departure_date:
+                        type: string
+                        x-stoplight:
+                          id: rpfzbj7y5l33i
+                      arrival_date:
+                        type: string
+                        x-stoplight:
+                          id: ltklkmie9e69w
+                      departure_time:
+                        type: string
+                        x-stoplight:
+                          id: rhbg4f3exsm81
+                      arrival_time:
+                        type: string
+                        x-stoplight:
+                          id: ampxqmqx5ey44
+                      departure_airport_id:
+                        type: integer
+                        x-stoplight:
+                          id: kmu4utkxye2ob
+                      arrival_airport_id:
+                        type: integer
+                        x-stoplight:
+                          id: 4fz71n40yvhxr
+                      flight_number:
+                        type: string
+                        x-stoplight:
+                          id: vf6r0lfhe97sf
+                      free_baggage:
+                        type: string
+                        x-stoplight:
+                          id: eliaqnrxmrjzn
+                      cabin_baggage:
+                        type: string
+                        x-stoplight:
+                          id: 7rfn4gu8pt0ok
+                      price:
+                        type: string
+                        x-stoplight:
+                          id: q2a88sbwgl4x4
+                      class_id:
+                        type: integer
+                        x-stoplight:
+                          id: nvsahiqjpbznd
+                      duration:
+                        type: string
+                        x-stoplight:
+                          id: 45s0d8a90hgr3
+                      departure_terminal_name:
+                        type: string
+                        x-stoplight:
+                          id: j51x7j7somtln
+                      arrival_terminal_name:
+                        type: string
+                        x-stoplight:
+                          id: 6l7v1azn68tu0
+                      seat_available:
+                        type: string
+                        x-stoplight:
+                          id: 4vio30szzsny7
+                  passengers:
+                    type: object
+                    x-stoplight:
+                      id: agzt6ws7jdveo
+                    properties:
+                      id:
+                        type: integer
+                        x-stoplight:
+                          id: f5wzbk983tn72
+                      order_id:
+                        type: integer
+                        x-stoplight:
+                          id: dcw0zh3okpuna
+                      booking_order:
+                        type: string
+                        x-stoplight:
+                          id: sgvy10p1sx3cn
+                      full_name:
+                        type: string
+                        x-stoplight:
+                          id: x428oud0fbndh
+                      family_name:
+                        type: string
+                        x-stoplight:
+                          id: v0er6kf77t43h
+                      phone:
+                        type: string
+                        x-stoplight:
+                          id: w457odolnt6b0
+                      email:
+                        type: string
+                        x-stoplight:
+                          id: h6x0tfyghx36w
+                      title:
+                        type: string
+                        x-stoplight:
+                          id: mu54vzh4hyjso
+                      date_birth:
+                        type: string
+                        x-stoplight:
+                          id: bzmm04nfplqfl
+                      nationality:
+                        type: string
+                        x-stoplight:
+                          id: jdguttuxvtm14
+                      identity_number:
+                        type: string
+                        x-stoplight:
+                          id: vgzq20w3euc81
+                      issuing_country:
+                        type: string
+                        x-stoplight:
+                          id: m7si4t73u8dkw
+                      identity_expired:
+                        type: string
+                        x-stoplight:
+                          id: 6rvzcssrp45o5
+                      schedule_id:
+                        type: integer
+                        x-stoplight:
+                          id: 2iw29782f7k2o
+                      seat_id:
+                        type: integer
+                        x-stoplight:
+                          id: vu0gqpmwzwhdg
+              examples:
+                Example 1:
+                  value:
+                    status: true
+                    message: success
+                    data:
+                      - id: 1
+                        user_id: 4
+                        full_name: Daffa
+                        family_name: Fauzan
+                        title: null
+                        email: daffaammar09@gmail.com
+                        phone: null
+                        schedulle_id: 1
+                        booking_code: 4REGZSS
+                        total_price: 1100638
+                        url_midtrans: null
+                        payment_status: UNPAID
+                        last_payment_date: "2023-06-16T16:03:01.570Z"
+                        createdAt: "2023-06-16T15:48:01.630Z"
+                        updatedAt: "2023-06-16T15:48:01.630Z"
+                        schedulle:
+                          id: 1
+                          airplane_id: 9
+                          departure_date: "2023-06-20"
+                          departure_time: "13:57:29.588"
+                          arrival_date: "2023-06-20"
+                          arrival_time: "20:57:29.588"
+                          departure_airport_id: 18
+                          arrival_airport_id: 5
+                          flight_number: PUQ791
+                          free_baggage: 13
+                          cabin_baggage: 8
+                          price: 1100638
+                          class_id: 1
+                          duration: null
+                          departure_terminal_name: Terminal D
+                          arrival_terminal_name: Terminal D
+                          seat_available: null
+                          createdAt: "2023-06-16T15:40:15.304Z"
+                          updatedAt: "2023-06-18T06:00:07.221Z"
+                        passengers:
+                          - id: 1
+                            order_id: 1
+                            booking_order: null
+                            full_name: Daffa
+                            family_name: Fauzan
+                            phone: null
+                            email: null
+                            title: Mr.
+                            date_birth: "2000-09-02T17:00:00.000Z"
+                            nationality: Indonesia
+                            identity_number: 912783123
+                            issuing_country: Indonesia
+                            identity_expired: null
+                            schedule_id: null
+                            seat_id: 15
+                            createdAt: "2023-06-16T15:48:01.905Z"
+                            updatedAt: "2023-06-16T15:48:01.905Z"
+                      - id: 2
+                        user_id: 4
+                        full_name: Daffa
+                        family_name: Fauzan
+                        title: null
+                        email: daffaammar09@gmail.com
+                        phone: null
+                        schedulle_id: 1
+                        booking_code: 4FE76IN
+                        total_price: 1100638
+                        url_midtrans: null
+                        payment_status: UNPAID
+                        last_payment_date: "2023-06-18T06:15:06.440Z"
+                        createdAt: "2023-06-18T06:00:06.449Z"
+                        updatedAt: "2023-06-18T06:00:06.449Z"
+                        schedulle:
+                          id: 1
+                          airplane_id: 9
+                          departure_date: "2023-06-20"
+                          departure_time: "13:57:29.588"
+                          arrival_date: "2023-06-20"
+                          arrival_time: "20:57:29.588"
+                          departure_airport_id: 18
+                          arrival_airport_id: 5
+                          flight_number: PUQ791
+                          free_baggage: 13
+                          cabin_baggage: 8
+                          price: 1100638
+                          class_id: 1
+                          duration: null
+                          departure_terminal_name: Terminal D
+                          arrival_terminal_name: Terminal D
+                          seat_available: null
+                          createdAt: "2023-06-16T15:40:15.304Z"
+                          updatedAt: "2023-06-18T06:00:07.221Z"
+                        passengers:
+                          - id: 2
+                            order_id: 2
+                            booking_order: null
+                            full_name: Daffa
+                            family_name: Fauzan
+                            phone: null
+                            email: null
+                            title: Mr.
+                            date_birth: "2000-09-02T17:00:00.000Z"
+                            nationality: Indonesia
+                            identity_number: 912783123
+                            issuing_country: Indonesia
+                            identity_expired: null
+                            schedule_id: null
+                            seat_id: 15
+                            createdAt: "2023-06-18T06:00:06.794Z"
+                            updatedAt: "2023-06-18T06:00:06.794Z"
+        "404":
+          description: Not Found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    x-stoplight:
+                      id: 0flgswchcvpy4
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: ff2ulxwdn5uqk
+                  data:
+                    type: string
+                    x-stoplight:
+                      id: ovrm0m82nae7n
+                    example: no type
+              examples:
+                Example 1:
+                  value:
+                    status: false
+                    message: can't find order
+                    data: null
+      operationId: get-orders-user
+      description: Order user
+      parameters:
+        - name: sort
+          in: query
+          description: Sort Filter
+          required: false
+          schema:
+            type: string
+            enum:
+              - created_asc
+              - created_desc
+        - name: startDateFilter
+          in: query
+          description: sortDateStart
+          required: false
+          schema:
+            type: string
+        - name: endDateFilter
+          in: query
+          description: sortDateEnd
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Pagination
+          required: true
+          schema:
+            type: integer
+      security:
+        - jwt_token: []
+components:
+  securitySchemes:
+    jwt_token:
+      type: apiKey
+      in: header
+      name: Authorization
+  schemas:
+    Passenger:
+      type: object
+      properties:
+        full_name:
+          type: string
+        family_name:
+          type: string
+        title:
+          type: string
+        date_birth:
+          type: string
+          format: date
+        nationality:
+          type: string
+        identity_number:
+          type: string
+        issuing_country:
+          type: string
+        identity_expired:
+          type: string
+          format: date
+        seat_id:
+          type: string
+      required:
+        - full_name
+        - family_name
+        - title
+        - date_birth
+        - nationality
+        - identity_number
+        - issuing_country
+        - identity_expired
+        - seat_id
+    OrderResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: "#/components/schemas/Order"
+    Order:
+      type: object
+      properties:
+        user_id:
+          type: string
+        full_name:
+          type: string
+        family_name:
+          type: string
+        email:
+          type: string
+        schedulle_id:
+          type: string
+        booking_code:
+          type: string
+        total_price:
+          type: number
+        url_midtrans:
+          type: string
+        payment_status:
+          type: string
+        last_payment_date:
+          type: string
+          format: date-time
+    AirportResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Airport"
+    Airport:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        airport_type:
+          type: string
+        code:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        - id: 1
+          name: Juanda
+          city: Surabaya
+          state: Indonesia
+          airport_type: null
+          code: SUB
+          createdAt: "2023-06-19T10:53:54.947Z"
+          updatedAt: "2023-06-19T10:53:54.947Z"
+        - id: 2
+          name: Iskandar
+          city: Pangkalan Bun
+          state: Indonesia
+          airport_type: null
+          code: PKN
+          createdAt: "2023-06-19T10:53:54.947Z"
+          updatedAt: "2023-06-19T10:53:54.947Z"
+        - id: 3
+          name: Soekarno Hatta International Airport
+          city: Jakarta
+          state: Indonesia
+          airport_type: null
+          code: CGK
+          createdAt: "2023-06-19T10:53:54.947Z"
+          updatedAt: "2023-06-19T10:53:54.947Z"
+    AirportSearchResponse:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Airport"
+    Error:
+      type: object
+      properties:
+        status:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: boolean
+  responses:
+    Unauthorized:
+      description: Unauthorized request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              code:
+                type: integer
