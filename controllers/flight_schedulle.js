@@ -413,6 +413,12 @@ module.exports = {
           {
             model: Airplane,
             as: "airplane",
+            include: [
+              {
+                model: Airline,
+                as: "airlane",
+              },
+            ],
           },
           {
             model: Airport,

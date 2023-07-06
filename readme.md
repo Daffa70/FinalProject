@@ -12,7 +12,7 @@ Teuku Aldy Pradana
 
 Development : https://km5-bejs1-airtix-develop.up.railway.app
 
-Production : https://km5-bejs1-airtix-production.up.railway.app/
+Production : https://km5-bejs1-airtix-production.up.railway.app
 
 API Docs Swagger: https://app.swaggerhub.com/apis/DAFFAAMMAR09/Airtix/1.0.0
 
