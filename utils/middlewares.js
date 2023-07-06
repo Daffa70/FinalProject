@@ -34,7 +34,13 @@ module.exports = {
 
         next();
       } catch (err) {
-        if (err.name === "TokenExpiredError") {
+        if (err instanceof jwt.JsonWebTokenError) {
+          return res.status(401).json({
+            status: false,
+            message: "Invalid token. Please provide a valid token.",
+            data: null,
+          });
+        } else if (err.name === "TokenExpiredError") {
           return res.status(401).json({
             status: false,
             message: "Token expired. Please log in again.",
