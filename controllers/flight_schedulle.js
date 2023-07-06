@@ -168,7 +168,16 @@ module.exports = {
       const flight_schedulle = await Flight_schedulle.findOne({
         where: { id: flight_schedulle_id },
         include: [
-          "airplane",
+          {
+            model: Airplane,
+            as: "airplane",
+            include: [
+              {
+                model: Airline,
+                as: "airlane",
+              },
+            ],
+          },
           "departure_airport",
           "arrival_airport",
           "class",
