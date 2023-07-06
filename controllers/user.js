@@ -211,9 +211,8 @@ module.exports = {
   verifyOtp: async (req, res) => {
     try {
       const { email, otp } = req.body;
-      const user = await User.findOne({
-        email: email,
-      });
+
+      const user = await User.findOne({ where: { email } });
 
       if (!user) {
         return res.status(400).json({
@@ -223,9 +222,7 @@ module.exports = {
         });
       }
 
-      const checkOtp = await OtpVerify.findOne({
-        user_id: user.id,
-      });
+      const checkOtp = await OtpVerify.findOne({ where: { user_id: user.id } });
 
       if (!checkOtp) {
         return res.status(400).json({
@@ -234,6 +231,8 @@ module.exports = {
           data: null,
         });
       }
+
+      console.log(user.email);
 
       if (checkOtp.otp_num !== otp) {
         return res.status(400).json({
