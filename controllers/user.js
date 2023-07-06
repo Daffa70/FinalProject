@@ -400,7 +400,7 @@ module.exports = {
 
       const decoded = await jwt.verify(token, JWT_SECRET_KEY);
 
-      const hashPassword = await bcrypt.hash(new_password, 10);
+      const hashPassword = await bcryp.hash(new_password, 10);
       const updated = await User.update(
         { password: hashPassword },
         { where: { id: decoded.id } }
